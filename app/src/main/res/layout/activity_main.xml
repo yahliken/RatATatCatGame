@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.MainActivity"
+    android:orientation="vertical"
+    android:background="@drawable/home_background">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:background="#FFB1B1"
+        android:layout_height="wrap_content"
+        android:text="Hello"
+        android:textSize="20dp"
+        android:textColor="#5D001E"
+        android:gravity="center"
+        android:layout_marginTop="20dp"
+        android:textStyle="bold"
+        android:id="@+id/tvHello"></TextView>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="340dp"></Space>
+
+    <Button
+        android:layout_width="130dp"
+        android:layout_height="60dp"
+        android:text="Play"
+        android:textSize="30dp"
+        android:textColor="#5D001E"
+        android:backgroundTint="#D6EF90A8"
+        android:layout_gravity="center"
+        android:layout_marginTop="0dp"
+        android:id="@+id/btnPlay"></Button>
+
+    <Button
+        android:layout_width="215dp"
+        android:layout_height="60dp"
+        android:text="Join game"
+        android:textSize="30dp"
+        android:textColor="#5D001E"
+        android:backgroundTint="#D6EF90A8"
+        android:layout_gravity="center"
+        android:layout_marginTop="5dp"
+        android:id="@+id/btnJoin"></Button>
+
+    <Button
+        android:layout_width="215dp"
+        android:layout_height="60dp"
+        android:text="Instructions"
+        android:textSize="30dp"
+        android:textColor="#5D001E"
+        android:backgroundTint="#D6EF90A8"
+        android:layout_gravity="center"
+        android:layout_marginTop="5dp"
+        android:id="@+id/btnInstructions"></Button>
+
+    <Button
+        android:layout_width="215dp"
+        android:layout_height="60dp"
+        android:text="Sign up"
+        android:textSize="30dp"
+        android:textColor="#5D001E"
+        android:backgroundTint="#D6EF90A8"
+        android:layout_gravity="center"
+        android:layout_marginTop="5dp"
+        android:id="@+id/btnSignUp"></Button>
+
+</LinearLayout>

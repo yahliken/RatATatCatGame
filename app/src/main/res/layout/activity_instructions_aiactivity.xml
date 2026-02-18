@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".InstructionsAIActivity"
+    android:orientation="vertical"
+    android:background="@drawable/background2">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Ask cat chat"
+        android:textSize="40dp"
+        android:textColor="#5D001E"
+        android:gravity="center"
+        android:layout_marginTop="50dp"
+        android:id="@+id/tvInstructionsAITitle"
+        android:textStyle="bold"></TextView>
+
+    <EditText
+        android:layout_width="280dp"
+        android:layout_height="200dp"
+        android:layout_gravity="center"
+        android:textSize="20dp"
+        android:gravity="top"
+        android:background="#FFEEEE"
+        android:hint="Enter your question here_"
+        android:id="@+id/etQuestion"></EditText>
+
+    <Button
+        android:layout_width="130dp"
+        android:layout_height="50dp"
+        android:text="Send🔎"
+        android:textStyle="bold"
+        android:textSize="20dp"
+        android:backgroundTint="#D6FFD9D9"
+        android:textColor="#5D001E"
+        android:id="@+id/btnSend"
+        android:layout_marginLeft="65dp"
+        android:layout_marginTop="15dp"></Button>
+
+    <TextView
+        android:id="@+id/tvAnswer"
+        android:layout_width="280dp"
+        android:layout_height="200dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="40dp"
+        android:hint="Cat answer_"
+        android:textSize="20dp"></TextView>
+
+    <Button
+        android:layout_width="60dp"
+        android:layout_height="50dp"
+        android:text="X"
+        android:textStyle="bold"
+        android:textSize="20dp"
+        android:backgroundTint="#D6E9869E"
+        android:textColor="#5D001E"
+        android:id="@+id/btnX"
+        android:layout_marginLeft="60dp"
+        android:layout_marginTop="15dp"></Button>
+
+</LinearLayout>

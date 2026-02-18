@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "142999669599",
+    "project_id": "ratatatcatnew",
+    "storage_bucket": "ratatatcatnew.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:142999669599:android:3a18a88c9440802f72c4ea",
+        "android_client_info": {
+          "package_name": "com.example.ratatatcat"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAzjYVQsl5qCH3y_dOK51eCu3tIDXVrM00"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
