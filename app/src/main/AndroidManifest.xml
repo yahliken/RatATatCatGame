@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.RatATatCat">
         <activity
+            android:name=".GameActivity"
+            android:exported="false" />
+        <activity
             android:name=".InstructionsAIActivity"
             android:exported="false" />
         <activity

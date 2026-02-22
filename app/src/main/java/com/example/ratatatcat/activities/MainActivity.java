@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.ratatatcat.GameActivity;
 import com.example.ratatatcat.InstructionsActivity;
 import com.example.ratatatcat.R;
 import com.example.ratatatcat.helpers.UserDetails;
@@ -70,5 +71,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Intent i = new Intent(this, InstructionsActivity.class);
             startActivity(i);
         }
+        else if (view == btnPlay) {
+            Intent i = new Intent(MainActivity.this, GameActivity.class);
+            i.putExtra("player", 1);
+            startActivity(i);
         }
+        else if (view == btnJoin) {
+            Intent i = new Intent(MainActivity.this, GameActivity.class);
+            i.putExtra("player", 2);
+            startActivity(i);
+        }
+    }
     }
