@@ -17,7 +17,7 @@ public class GameActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
 
-        player =getIntent().getIntExtra("player", 1);
+        player =getIntent().getIntExtra("player", 0);
         boardGame = new BoardGame(this);
 
         setContentView(boardGame);
