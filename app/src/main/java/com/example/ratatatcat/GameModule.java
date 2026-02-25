@@ -2,6 +2,7 @@ package com.example.ratatatcat;
 
 import android.content.Context;
 
+import com.example.ratatatcat.helpers.FbModule;
 import com.example.ratatatcat.model.Card;
 
 import java.util.ArrayList;
@@ -9,8 +10,9 @@ import java.util.Random;
 
 public class GameModule {
     private final int DRAW2 = -1, PEEK = -2, SWAP = -3;
-    private static ArrayList<Card> deck = new ArrayList<Card>(), trash = new ArrayList<Card>(), player1 = new ArrayList<Card>(), player2 = new ArrayList<Card>();
+    public static ArrayList<Card> deck = new ArrayList<Card>(), trash = new ArrayList<Card>(), player1 = new ArrayList<Card>(), player2 = new ArrayList<Card>();
     private Context context;
+    private FbModule instance;
     public GameModule(Context context) {
         this.context = context;
     }
@@ -95,7 +97,22 @@ public class GameModule {
         }
         shuffle();
         //בגלל שבדקנו שכולם מספרים נותרנו עם הרבה מיוחדים שדילגנו עליהם לכן נערבב שוב כדי שלא יהיה מצב שכל ההתחלה של הקופה מיוחדים
-        //setDecksFromFB();
-        //אחרי כל שינוי בחפיסות נעדכן את הפיירבייס
+        if(GameActivity.player==BoardGame.HOST){
+            instance = FbModule.getInstance(context);
+            instance.setDeck(deck, "deck");
+            instance.setDeck(player1, "player1");
+            instance.setDeck(player2, "player2");
+            instance.setDeck(trash,"trash");
+        }
+        //תחילה רק המנהל משחק יעלה את החפיסות
+    }
+
+    public void setDecksFromFB(){
+        instance = FbModule.getInstance(context);
+        instance.setDeck(deck, "deck");
+        instance.setDeck(player1, "player1");
+        instance.setDeck(player2, "player2");
+        instance.setDeck(trash,"trash");
+        //אחרי הפעם הראשונה שני המכשירים מעלים לפיירבייס
     }
 }
