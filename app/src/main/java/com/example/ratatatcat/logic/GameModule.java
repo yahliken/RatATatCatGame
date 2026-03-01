@@ -6,6 +6,7 @@ import com.example.ratatatcat.R;
 import com.example.ratatatcat.activities.GameActivity;
 import com.example.ratatatcat.helpers.FbModule;
 import com.example.ratatatcat.model.Card;
+import com.google.firebase.database.DataSnapshot;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -99,13 +100,7 @@ public class GameModule {
         }
         shuffle();
         //בגלל שבדקנו שכולם מספרים נותרנו עם הרבה מיוחדים שדילגנו עליהם לכן נערבב שוב כדי שלא יהיה מצב שכל ההתחלה של הקופה מיוחדים
-        if(GameActivity.player== BoardGame.HOST){
-            instance = FbModule.getInstance(context);
-            instance.setDeck(deck, "deck");
-            instance.setDeck(player1, "player1");
-            instance.setDeck(player2, "player2");
-            instance.setDeck(trash,"trash");
-        }
+        setDecksFromFB();
         //תחילה רק המנהל משחק יעלה את החפיסות
     }
 
@@ -117,4 +112,9 @@ public class GameModule {
         instance.setDeck(trash,"trash");
         //אחרי הפעם הראשונה שני המכשירים מעלים לפיירבייס
     }
+
+    public void joinGame() {
+        instance = FbModule.getInstance(context);
+    }
+
 }

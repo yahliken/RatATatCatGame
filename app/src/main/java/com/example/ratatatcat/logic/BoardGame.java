@@ -27,6 +27,9 @@ public class BoardGame extends View {
         if (GameActivity.player == HOST) {
             gameModule.startGame();
         }
+        else {
+            gameModule.joinGame();
+        }
     }
 
     @Override

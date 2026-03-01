@@ -4,6 +4,8 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
+import com.example.ratatatcat.activities.GameActivity;
+import com.example.ratatatcat.logic.BoardGame;
 import com.example.ratatatcat.logic.GameModule;
 import com.example.ratatatcat.model.Card;
 import com.google.firebase.database.DataSnapshot;
@@ -27,6 +29,12 @@ public class FbModule {
         users = firebaseDatabase.getReference("users");
         decks = firebaseDatabase.getReference("decks");
         turnCount = firebaseDatabase.getReference("turnCount");
+
+
+        if(GameActivity.player== BoardGame.HOST)
+        {
+            ClearDecksFromFb();
+        }
 
         //להוסיף פעולת עדכון אחרי כל תור שמה נשנה את הערך בCOUNT וננקה את החבילות בGAMEMODULE
         turnCount.addValueEventListener(new ValueEventListener() {
@@ -94,11 +102,16 @@ public class FbModule {
         return users;
     }
 
+    /*public DatabaseReference getDecks() {
+        return decks;
+    }*/
+
     public void setDeck(ArrayList<Card> arrayList, String deckName){
         //יוצר את החפיסה בדטהבייס בפעם הראשונה עבור כל חפיסה בנפרד
         DatabaseReference myRef = firebaseDatabase.getReference("Decks/" + deckName +"/");
         myRef.setValue(arrayList);
     }
+
 
     public void ClearDecksFromFb(){
         //יוצר את החפיסה בדטהבייס בפעם הראשונה עבור כל חפיסה בנפרד
