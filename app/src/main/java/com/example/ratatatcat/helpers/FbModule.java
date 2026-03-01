@@ -4,7 +4,7 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
-import com.example.ratatatcat.GameModule;
+import com.example.ratatatcat.logic.GameModule;
 import com.example.ratatatcat.model.Card;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;

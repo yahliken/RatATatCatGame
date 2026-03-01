@@ -1,7 +1,9 @@
-package com.example.ratatatcat;
+package com.example.ratatatcat.logic;
 
 import android.content.Context;
 
+import com.example.ratatatcat.R;
+import com.example.ratatatcat.activities.GameActivity;
 import com.example.ratatatcat.helpers.FbModule;
 import com.example.ratatatcat.model.Card;
 
@@ -97,7 +99,7 @@ public class GameModule {
         }
         shuffle();
         //בגלל שבדקנו שכולם מספרים נותרנו עם הרבה מיוחדים שדילגנו עליהם לכן נערבב שוב כדי שלא יהיה מצב שכל ההתחלה של הקופה מיוחדים
-        if(GameActivity.player==BoardGame.HOST){
+        if(GameActivity.player== BoardGame.HOST){
             instance = FbModule.getInstance(context);
             instance.setDeck(deck, "deck");
             instance.setDeck(player1, "player1");

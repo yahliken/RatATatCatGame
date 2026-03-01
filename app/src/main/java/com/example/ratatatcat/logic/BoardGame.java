@@ -1,4 +1,4 @@
-package com.example.ratatatcat;
+package com.example.ratatatcat.logic;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -7,6 +7,9 @@ import android.graphics.Canvas;
 import android.view.View;
 
 import androidx.annotation.NonNull;
+
+import com.example.ratatatcat.R;
+import com.example.ratatatcat.activities.GameActivity;
 
 public class BoardGame extends View {
 
@@ -75,10 +78,10 @@ public class BoardGame extends View {
                 bitmap2 = Bitmap.createScaledBitmap(bitmap2, canvasWidth / 4 - 70, 350, false);
                 gameModule.player1.get(i).Draw(canvas, bitmap2);
             }
-            if (isFirstTime) {
-                isFirstTime = false;
-            }
             gameModule.setDecksFromFB();
+        }
+        if (isFirstTime) {
+            isFirstTime = false;
         }
     }
 }

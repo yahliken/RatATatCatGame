@@ -12,13 +12,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.RatATatCat">
         <activity
-            android:name=".GameActivity"
+            android:name=".activities.GameActivity"
             android:exported="false" />
         <activity
-            android:name=".InstructionsAIActivity"
+            android:name=".activities.InstructionsAIActivity"
             android:exported="false" />
         <activity
-            android:name=".InstructionsActivity"
+            android:name=".activities.InstructionsActivity"
             android:exported="false" />
         <activity
             android:name=".activities.SignUpActivity"

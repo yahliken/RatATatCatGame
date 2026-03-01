@@ -10,8 +10,6 @@ import android.widget.TextView;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.ratatatcat.GameActivity;
-import com.example.ratatatcat.InstructionsActivity;
 import com.example.ratatatcat.R;
 import com.example.ratatatcat.helpers.UserDetails;
 
