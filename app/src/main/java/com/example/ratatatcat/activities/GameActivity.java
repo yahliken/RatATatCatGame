@@ -22,4 +22,8 @@ public class GameActivity extends AppCompatActivity {
         setContentView(boardGame);
 
     }
+
+    public void setChanges() {
+        boardGame.setChanges();
+    }
 }

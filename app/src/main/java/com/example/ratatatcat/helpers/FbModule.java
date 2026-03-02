@@ -78,7 +78,11 @@ public class FbModule {
                         Card currentCard = userSnapshot.getValue(Card.class);
                         GameModule.trash.add(currentCard);
                     }
-                    //להוסיף פעולת SETCHANGE שם נעשה INVALIDATE
+                    //בדיקה אם הcontext של הgameactivity
+                    if (context instanceof GameActivity) {
+                        BoardGame.FbExist=true;
+                        ((GameActivity) context).setChanges();
+                    }
                 }
 
 
@@ -95,6 +99,8 @@ public class FbModule {
         if (instance == null) {
             instance = new FbModule(context);
         }
+        //הcontext שיוחזר הוא חדש וכך נמנע שימוש בקיים למשל בsignup
+        instance.context = context;
         return instance;
     }
 
@@ -108,14 +114,14 @@ public class FbModule {
 
     public void setDeck(ArrayList<Card> arrayList, String deckName){
         //יוצר את החפיסה בדטהבייס בפעם הראשונה עבור כל חפיסה בנפרד
-        DatabaseReference myRef = firebaseDatabase.getReference("Decks/" + deckName +"/");
+        DatabaseReference myRef = firebaseDatabase.getReference("decks/" + deckName +"/");
         myRef.setValue(arrayList);
     }
 
 
     public void ClearDecksFromFb(){
         //יוצר את החפיסה בדטהבייס בפעם הראשונה עבור כל חפיסה בנפרד
-        DatabaseReference myRef = firebaseDatabase.getReference("Decks");
+        DatabaseReference myRef = firebaseDatabase.getReference("decks");
         myRef.removeValue();
     }
 }

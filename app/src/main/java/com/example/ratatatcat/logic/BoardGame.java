@@ -18,6 +18,7 @@ public class BoardGame extends View {
     private GameModule gameModule;
     private int canvasWidth, canvasHeight;
     private boolean isFirstTime = true;
+    public static boolean FbExist = false;
 
     public BoardGame(Context context) {
         super(context);
@@ -36,6 +37,9 @@ public class BoardGame extends View {
     protected void onDraw(@NonNull Canvas canvas) {
         super.onDraw(canvas);
 
+        if(FbExist == false && GameActivity.player != HOST){
+            return;
+        }
         if (isFirstTime) {
             canvasWidth = canvas.getWidth();
             canvasHeight = canvas.getHeight();
@@ -81,10 +85,14 @@ public class BoardGame extends View {
                 bitmap2 = Bitmap.createScaledBitmap(bitmap2, canvasWidth / 4 - 70, 350, false);
                 gameModule.player1.get(i).Draw(canvas, bitmap2);
             }
-            gameModule.setDecksFromFB();
         }
+        gameModule.setDecksFromFB();
         if (isFirstTime) {
             isFirstTime = false;
         }
+    }
+
+    public void setChanges() {
+        invalidate();
     }
 }
