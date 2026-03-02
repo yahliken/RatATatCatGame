@@ -36,8 +36,7 @@ public class FbModule {
             ClearDecksFromFb();
         }
 
-        //להוסיף פעולת עדכון אחרי כל תור שמה נשנה את הערך בCOUNT וננקה את החבילות בGAMEMODULE
-        turnCount.addValueEventListener(new ValueEventListener() {
+        /* turnCount.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
@@ -47,7 +46,7 @@ public class FbModule {
             public void onCancelled(@NonNull DatabaseError error) {
 
             }
-        });
+        });*/
 
         decks.addValueEventListener(new ValueEventListener() {
             @Override
