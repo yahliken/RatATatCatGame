@@ -40,6 +40,14 @@ public class BoardGame extends View {
         if(FbExist == false && GameActivity.player != HOST){
             return;
         }
+
+        if (GameModule.deck == null || GameModule.deck.isEmpty() ||
+                GameModule.player1 == null || GameModule.player1.isEmpty() ||
+                GameModule.player2 == null || GameModule.player2.isEmpty()) {
+            invalidate(); // בקש ציור מחדש בעוד רגע
+            return;
+        }
+
         if (isFirstTime) {
             canvasWidth = canvas.getWidth();
             canvasHeight = canvas.getHeight();

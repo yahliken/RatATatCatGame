@@ -53,7 +53,7 @@ public class FbModule {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if(snapshot.getValue() != null) {
-                    GameModule.deck.clear();
+                    /*GameModule.deck.clear();
                     DataSnapshot deckSnapshot = snapshot.child("deck");
                     for (DataSnapshot userSnapshot : deckSnapshot.getChildren()) {
                         Card currentCard = userSnapshot.getValue(Card.class);
@@ -77,11 +77,34 @@ public class FbModule {
                     for (DataSnapshot userSnapshot : trashSnapshot.getChildren()) {
                         Card currentCard = userSnapshot.getValue(Card.class);
                         GameModule.trash.add(currentCard);
+                    }*/
+
+                    // במקום הלולאות הישנות וה-clear הישיר, תעשי ככה:
+
+                    if (snapshot.child("deck").exists()) {
+                        updateListSafely(snapshot.child("deck"), GameModule.deck);
                     }
+
+                    if (snapshot.child("player1").exists()) {
+                        updateListSafely(snapshot.child("player1"), GameModule.player1);
+                    }
+
+                    if (snapshot.child("player2").exists()) {
+                        updateListSafely(snapshot.child("player2"), GameModule.player2);
+                    }
+                    if (snapshot.child("trash").exists()) {
+                        updateListSafely(snapshot.child("trash"), GameModule.trash);
+                    }
+
                     //בדיקה אם הcontext של הgameactivity
                     if (context instanceof GameActivity) {
                         BoardGame.FbExist=true;
-                        ((GameActivity) context).setChanges();
+                        ((GameActivity) context).runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                ((GameActivity) context).setChanges();
+                            }
+                        });
                     }
                 }
 
@@ -108,9 +131,6 @@ public class FbModule {
         return users;
     }
 
-    /*public DatabaseReference getDecks() {
-        return decks;
-    }*/
 
     public void setDeck(ArrayList<Card> arrayList, String deckName){
         //יוצר את החפיסה בדטהבייס בפעם הראשונה עבור כל חפיסה בנפרד
@@ -123,5 +143,18 @@ public class FbModule {
         //יוצר את החפיסה בדטהבייס בפעם הראשונה עבור כל חפיסה בנפרד
         DatabaseReference myRef = firebaseDatabase.getReference("decks");
         myRef.removeValue();
+    }
+
+    private void updateListSafely(DataSnapshot snapshot, ArrayList<Card> list) {
+        ArrayList<Card> tempList = new ArrayList<>(); // רשימה זמנית
+        for (DataSnapshot child : snapshot.getChildren()) {
+            Card card = child.getValue(Card.class);
+            if (card != null) {
+                tempList.add(card);
+            }
+        }
+        // העדכון הממשי קורה בבת אחת - זה מונע מה-onDraw לתפוס רשימה ריקה
+        list.clear();
+        list.addAll(tempList);
     }
 }
