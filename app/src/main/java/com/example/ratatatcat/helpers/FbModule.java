@@ -78,7 +78,6 @@ public class FbModule {
                         GameModule.trash.add(currentCard);
                     }*/
 
-                    // במקום הלולאות הישנות וה-clear הישיר, תעשי ככה:
 
                     if (snapshot.child("deck").exists()) {
                         updateListSafely(snapshot.child("deck"), GameModule.deck);
@@ -124,6 +123,10 @@ public class FbModule {
         //הcontext שיוחזר הוא חדש וכך נמנע שימוש בקיים למשל בsignup
         instance.context = context;
         return instance;
+    }
+
+    public void setContext (Context context){
+        this.context=context;
     }
 
     public DatabaseReference getUsers() {

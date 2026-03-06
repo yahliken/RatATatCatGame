@@ -40,7 +40,7 @@ public class BoardGame extends View {
         if(FbExist == false && GameActivity.player != HOST){
             return;
         }
-
+        //אם עדיין לא התמלאו החבילות מFB מצייר מחדש כלומר חוזר לפעולה זו שוב
         if (GameModule.deck == null || GameModule.deck.isEmpty() ||
                 GameModule.player1 == null || GameModule.player1.isEmpty() ||
                 GameModule.player2 == null || GameModule.player2.isEmpty()) {

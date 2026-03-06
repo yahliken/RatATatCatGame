@@ -20,6 +20,7 @@ import com.example.ratatatcat.model.User;
 public class SignUpActivity extends AppCompatActivity implements View.OnClickListener {
 
     private ViewFlipper viewFlipper;
+    private FbModule instance;
     private TextView tvSwitchToLogIn, tvSwitchToSignUp;
     private Button btnSignUp, btnLogIn;
     private EditText etUserNameS, etPasswordS, etPasswordVerification, etUserNameL, etPasswordL;
@@ -50,6 +51,9 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         etPasswordVerification = findViewById(R.id.etPasswordVerification);
         etUserNameL = findViewById(R.id.etUserNameL);
         etPasswordL = findViewById(R.id.etPasswordL);
+
+        instance = FbModule.getInstance(this);
+        instance.setContext(this);
 
     }
 
@@ -86,14 +90,14 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             etPasswordVerification.setText("");
             return;
         }
-        FbModule.getInstance(this).getUsers().child(userName).get().addOnSuccessListener(dataSnapshot -> {
+        instance.getUsers().child(userName).get().addOnSuccessListener(dataSnapshot -> {
             if(dataSnapshot.exists()){
                 Toast.makeText(this, "user already exist", Toast.LENGTH_SHORT).show();
             }
             else {
                 User user = new User(etUserNameS.getText().toString(), etPasswordS.getText().toString());
                 //הולך לפיירבייס לצומת משתמשים ויוצר או מנווט בין הרשומות שם לפי הערך המיוחד להן - במקרה זה שם המשתמש. אם אין רשומה כזו הוא יוצר אותה
-                FbModule.getInstance(this).getUsers().child(user.getUserName()).setValue(user);
+                instance.getUsers().child(user.getUserName()).setValue(user);
                 UserDetails.getInstance(this).setUserName(user.getUserName());
                 Toast.makeText(this, "user added", Toast.LENGTH_SHORT).show();
                 finish();
@@ -115,7 +119,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             return;
         }
 
-        FbModule.getInstance(this).getUsers().child(userName).get().addOnSuccessListener(dataSnapshot -> {
+        instance.getUsers().child(userName).get().addOnSuccessListener(dataSnapshot -> {
             if (dataSnapshot.exists()) {
                 User user = new User();
                 user.setUserName(dataSnapshot.child("userName").getValue(String.class));
