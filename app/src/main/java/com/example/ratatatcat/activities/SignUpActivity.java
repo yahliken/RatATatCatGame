@@ -1,6 +1,7 @@
 package com.example.ratatatcat.activities;
 
 import android.annotation.SuppressLint;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -20,7 +21,7 @@ import com.example.ratatatcat.model.User;
 public class SignUpActivity extends AppCompatActivity implements View.OnClickListener {
 
     private ViewFlipper viewFlipper;
-    private FbModule instance;
+    /*private FbModule instance;*/
     private TextView tvSwitchToLogIn, tvSwitchToSignUp;
     private Button btnSignUp, btnLogIn;
     private EditText etUserNameS, etPasswordS, etPasswordVerification, etUserNameL, etPasswordL;
@@ -52,8 +53,8 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         etUserNameL = findViewById(R.id.etUserNameL);
         etPasswordL = findViewById(R.id.etPasswordL);
 
-        instance = FbModule.getInstance(this);
-        instance.setContext(this);
+        /*instance = FbModule.getInstance(this);
+        instance.setContext(this);*/
 
     }
 
@@ -90,7 +91,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             etPasswordVerification.setText("");
             return;
         }
-        instance.getUsers().child(userName).get().addOnSuccessListener(dataSnapshot -> {
+        /*instance.getUsers().child(userName).get().addOnSuccessListener(dataSnapshot -> {
             if(dataSnapshot.exists()){
                 Toast.makeText(this, "user already exist", Toast.LENGTH_SHORT).show();
             }
@@ -104,8 +105,22 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             }
         }).addOnFailureListener(e -> {
             Toast.makeText(this, "error occurred", Toast.LENGTH_SHORT).show();
-        });
+        });*/
 
+        // שמירה מקומית במכשיר במקום בפיירבייס
+        SharedPreferences sp = getSharedPreferences("Users", MODE_PRIVATE);
+
+        // בדיקה אם המשתמש כבר קיים מקומית
+        if(sp.contains(userName)) {
+            Toast.makeText(this, "User already exists", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            sp.edit().putString(userName, password).apply(); // שמירת שם וסיסמה
+            sp.edit().putString("currentLoggedUser", userName).apply(); // שמירת המשתמש המחובר כרגע
+            Toast.makeText(this, "User added", Toast.LENGTH_SHORT).show();
+            UserDetails.getInstance(this).setUserName(userName);
+            finish();
+        }
     }
 
     //אותו קטע קוד רק הפוך בתנאי
@@ -119,7 +134,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             return;
         }
 
-        instance.getUsers().child(userName).get().addOnSuccessListener(dataSnapshot -> {
+        /*instance.getUsers().child(userName).get().addOnSuccessListener(dataSnapshot -> {
             if (dataSnapshot.exists()) {
                 User user = new User();
                 user.setUserName(dataSnapshot.child("userName").getValue(String.class));
@@ -136,6 +151,18 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             }
         }).addOnFailureListener(e -> {
             Toast.makeText(this, "login failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-        });
+        });*/
+
+        SharedPreferences sp = getSharedPreferences("Users", MODE_PRIVATE);
+        String savedPassword = sp.getString(userName, null);
+
+        if (sp.contains(userName) && savedPassword != null && savedPassword.equals(password)) {
+            sp.edit().putString("currentLoggedUser", userName).apply();
+            Toast.makeText(this, "Logged in", Toast.LENGTH_SHORT).show();
+            UserDetails.getInstance(this).setUserName(userName);
+            finish();
+        } else {
+            Toast.makeText(this, "User does not exsit", Toast.LENGTH_SHORT).show();
+        }
     }
 }

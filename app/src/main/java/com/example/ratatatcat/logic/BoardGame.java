@@ -38,6 +38,7 @@ public class BoardGame extends View {
         super.onDraw(canvas);
 
         if(FbExist == false && GameActivity.player != HOST){
+            invalidate();
             return;
         }
         //אם עדיין לא התמלאו החבילות מFB מצייר מחדש כלומר חוזר לפעולה זו שוב

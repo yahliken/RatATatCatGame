@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onResume() {
         super.onResume();
 
-        if (UserDetails.getInstance(this).getUserName() != "") {
+        if (!UserDetails.getInstance(this).getUserName().equals("")) {
             tvHello.setText("Hello " + UserDetails.getInstance(this).getUserName());
             btnSignUp.setVisibility(View.GONE);
             btnPlay.setVisibility(View.VISIBLE);

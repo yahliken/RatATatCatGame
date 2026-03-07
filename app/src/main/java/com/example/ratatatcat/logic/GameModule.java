@@ -102,6 +102,7 @@ public class GameModule {
         //בגלל שבדקנו שכולם מספרים נותרנו עם הרבה מיוחדים שדילגנו עליהם לכן נערבב שוב כדי שלא יהיה מצב שכל ההתחלה של הקופה מיוחדים
         setDecksFromFB();
         //תחילה רק המנהל משחק יעלה את החפיסות
+        BoardGame.FbExist= true;
     }
 
     public void setDecksFromFB(){

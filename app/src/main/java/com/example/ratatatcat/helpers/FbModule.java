@@ -21,12 +21,13 @@ public class FbModule {
     private static FbModule instance;
     private Context context;
     FirebaseDatabase firebaseDatabase;
-    DatabaseReference users, decks, turnCount;
+    /*DatabaseReference users;*/
+    DatabaseReference decks, turnCount;
 
     private FbModule(Context context) {
         this.context = context;
         firebaseDatabase = FirebaseDatabase.getInstance(fbUrl);
-        users = firebaseDatabase.getReference("users");
+        /*users = firebaseDatabase.getReference("users");*/
         decks = firebaseDatabase.getReference("decks");
         turnCount = firebaseDatabase.getReference("turnCount");
 
@@ -94,9 +95,14 @@ public class FbModule {
                         updateListSafely(snapshot.child("trash"), GameModule.trash);
                     }
 
+                    // רק אם כל החפיסות הגיעו, נסמן שהנתונים קיימים
+                    if(snapshot.hasChild("deck") && snapshot.hasChild("player1") && snapshot.hasChild("player2")) {
+                        BoardGame.FbExist = true;
+                    }
+
+                    /*BoardGame.FbExist=true;*/
                     //בדיקה אם הcontext של הgameactivity
                     if (context instanceof GameActivity) {
-                        BoardGame.FbExist=true;
                         ((GameActivity) context).runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -129,9 +135,9 @@ public class FbModule {
         this.context=context;
     }
 
-    public DatabaseReference getUsers() {
+    /*public DatabaseReference getUsers() {
         return users;
-    }
+    }*/
 
 
     public void setDeck(ArrayList<Card> arrayList, String deckName){
@@ -158,5 +164,10 @@ public class FbModule {
         // העדכון הממשי קורה בבת אחת - זה מונע מה-onDraw לתפוס רשימה ריקה
         list.clear();
         list.addAll(tempList);
+
+        //אם הצלחנו למלא רשימה כלשהי, סימן שיש תקשורת
+        if (!list.isEmpty()) {
+            BoardGame.FbExist = true;
+        }
     }
 }
