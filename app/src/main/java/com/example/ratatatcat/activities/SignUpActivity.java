@@ -21,7 +21,6 @@ import com.example.ratatatcat.model.User;
 public class SignUpActivity extends AppCompatActivity implements View.OnClickListener {
 
     private ViewFlipper viewFlipper;
-    /*private FbModule instance;*/
     private TextView tvSwitchToLogIn, tvSwitchToSignUp;
     private Button btnSignUp, btnLogIn;
     private EditText etUserNameS, etPasswordS, etPasswordVerification, etUserNameL, etPasswordL;
@@ -53,9 +52,6 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         etUserNameL = findViewById(R.id.etUserNameL);
         etPasswordL = findViewById(R.id.etPasswordL);
 
-        /*instance = FbModule.getInstance(this);
-        instance.setContext(this);*/
-
     }
 
     @Override
@@ -75,8 +71,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     //שתי בדיקות האם אחד השדות ריקים או שהאימות סיסמה שגוי
-    //הולך לפיירבייס לצומת משתמשים ובודק אם קיימת רשומה עם אותו שם
-    //אם הפעולה הצליחה בודק אם אותו צומת קיים או שהוא ריק - לא קיים אחרת רושם ארור
+    //בודק אם שם המשתמש קיים בSHARED PREFERENCES
     private void signUp() {
         String userName= etUserNameS.getText().toString();
         String password = etPasswordS.getText().toString();
@@ -91,21 +86,6 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             etPasswordVerification.setText("");
             return;
         }
-        /*instance.getUsers().child(userName).get().addOnSuccessListener(dataSnapshot -> {
-            if(dataSnapshot.exists()){
-                Toast.makeText(this, "user already exist", Toast.LENGTH_SHORT).show();
-            }
-            else {
-                User user = new User(etUserNameS.getText().toString(), etPasswordS.getText().toString());
-                //הולך לפיירבייס לצומת משתמשים ויוצר או מנווט בין הרשומות שם לפי הערך המיוחד להן - במקרה זה שם המשתמש. אם אין רשומה כזו הוא יוצר אותה
-                instance.getUsers().child(user.getUserName()).setValue(user);
-                UserDetails.getInstance(this).setUserName(user.getUserName());
-                Toast.makeText(this, "user added", Toast.LENGTH_SHORT).show();
-                finish();
-            }
-        }).addOnFailureListener(e -> {
-            Toast.makeText(this, "error occurred", Toast.LENGTH_SHORT).show();
-        });*/
 
         // שמירה מקומית במכשיר במקום בפיירבייס
         SharedPreferences sp = getSharedPreferences("Users", MODE_PRIVATE);
@@ -124,7 +104,6 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     //אותו קטע קוד רק הפוך בתנאי
-    //אם נמצא צומת כזה הוא יוצר משתמש עם נתוני אותו צומת ובודק שגם הסיסמה מתאימה
     private void logIn() {
         String userName = etUserNameL.getText().toString();
         String password = etPasswordL.getText().toString();
@@ -133,25 +112,6 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
             return;
         }
-
-        /*instance.getUsers().child(userName).get().addOnSuccessListener(dataSnapshot -> {
-            if (dataSnapshot.exists()) {
-                User user = new User();
-                user.setUserName(dataSnapshot.child("userName").getValue(String.class));
-                user.setPassword(dataSnapshot.child("password").getValue(String.class));
-                if (user.getPassword() != null && user.getPassword().equals(password)) {
-                    UserDetails.getInstance(this).setUserName(userName);
-                    Toast.makeText(this, "user logged in", Toast.LENGTH_SHORT).show();
-                    finish();
-                } else {
-                    Toast.makeText(this, "incorrect password", Toast.LENGTH_SHORT).show();
-                }
-            } else {
-                Toast.makeText(this, "user does not exist", Toast.LENGTH_SHORT).show();
-            }
-        }).addOnFailureListener(e -> {
-            Toast.makeText(this, "login failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-        });*/
 
         SharedPreferences sp = getSharedPreferences("Users", MODE_PRIVATE);
         String savedPassword = sp.getString(userName, null);

@@ -23,7 +23,6 @@ public class GameActivity extends AppCompatActivity {
         player =getIntent().getIntExtra("player", 0);
         boardGame = new BoardGame(this);
         instance = FbModule.getInstance(this);
-        instance.setContext(this);
         setContentView(boardGame);
 
     }

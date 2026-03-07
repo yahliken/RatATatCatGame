@@ -95,6 +95,24 @@ public class BoardGame extends View {
                 gameModule.player1.get(i).Draw(canvas, bitmap2);
             }
         }
+
+        gameModule.deck.get(0).setX(canvasWidth-250);
+        gameModule.deck.get(0).setY((canvasHeight/2)-140);
+        Bitmap bitmapDeck = BitmapFactory.decodeResource(getResources(), gameModule.deck.get(0).getIdShown());
+        bitmapDeck = Bitmap.createScaledBitmap(bitmapDeck, canvasWidth / 4 - 70, 350, false);
+        gameModule.deck.get(0).Draw(canvas, bitmapDeck);
+
+
+        int trashSize = gameModule.trash.size();
+        if(trashSize!=0){
+            gameModule.trash.get(trashSize-1).setX(50);
+            gameModule.trash.get(trashSize-1).setY((canvasHeight/2)-140);
+            gameModule.trash.get(trashSize-1).setIdShown(gameModule.trash.get(trashSize-1).getIdFront());
+            Bitmap bitmapTrash = BitmapFactory.decodeResource(getResources(), gameModule.trash.get(trashSize-1).getIdShown());
+            bitmapTrash = Bitmap.createScaledBitmap(bitmapTrash, canvasWidth / 4 - 70, 350, false);
+            gameModule.trash.get(trashSize-1).Draw(canvas, bitmapTrash);
+        }
+
         gameModule.setDecksFromFB();
         if (isFirstTime) {
             isFirstTime = false;

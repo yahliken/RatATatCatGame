@@ -53,46 +53,20 @@ public class FbModule {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if(snapshot.getValue() != null) {
-                    /*GameModule.deck.clear();
-                    DataSnapshot deckSnapshot = snapshot.child("deck");
-                    for (DataSnapshot userSnapshot : deckSnapshot.getChildren()) {
-                        Card currentCard = userSnapshot.getValue(Card.class);
-                        GameModule.deck.add(currentCard);
-                    }
-                    //הuserSnapshot מייצג הפנייה לכל איברי הקלפים שמתחת לצומת
-                    GameModule.player1.clear();
-                    DataSnapshot player1Snapshot = snapshot.child("player1");
-                    for (DataSnapshot userSnapshot : player1Snapshot.getChildren()) {
-                        Card currentCard = userSnapshot.getValue(Card.class);
-                        GameModule.player1.add(currentCard);
-                    }
-                    GameModule.player2.clear();
-                    DataSnapshot player2Snapshot = snapshot.child("player2");
-                    for (DataSnapshot userSnapshot : player2Snapshot.getChildren()) {
-                        Card currentCard = userSnapshot.getValue(Card.class);
-                        GameModule.player2.add(currentCard);
-                    }
-                    GameModule.trash.clear();
-                    DataSnapshot trashSnapshot = snapshot.child("trash");
-                    for (DataSnapshot userSnapshot : trashSnapshot.getChildren()) {
-                        Card currentCard = userSnapshot.getValue(Card.class);
-                        GameModule.trash.add(currentCard);
-                    }*/
-
 
                     if (snapshot.child("deck").exists()) {
-                        updateListSafely(snapshot.child("deck"), GameModule.deck);
+                        updateList(snapshot.child("deck"), GameModule.deck);
                     }
 
                     if (snapshot.child("player1").exists()) {
-                        updateListSafely(snapshot.child("player1"), GameModule.player1);
+                        updateList(snapshot.child("player1"), GameModule.player1);
                     }
 
                     if (snapshot.child("player2").exists()) {
-                        updateListSafely(snapshot.child("player2"), GameModule.player2);
+                        updateList(snapshot.child("player2"), GameModule.player2);
                     }
                     if (snapshot.child("trash").exists()) {
-                        updateListSafely(snapshot.child("trash"), GameModule.trash);
+                        updateList(snapshot.child("trash"), GameModule.trash);
                     }
 
                     // רק אם כל החפיסות הגיעו, נסמן שהנתונים קיימים
@@ -100,7 +74,6 @@ public class FbModule {
                         BoardGame.FbExist = true;
                     }
 
-                    /*BoardGame.FbExist=true;*/
                     //בדיקה אם הcontext של הgameactivity
                     if (context instanceof GameActivity) {
                         ((GameActivity) context).runOnUiThread(new Runnable() {
@@ -135,10 +108,6 @@ public class FbModule {
         this.context=context;
     }
 
-    /*public DatabaseReference getUsers() {
-        return users;
-    }*/
-
 
     public void setDeck(ArrayList<Card> arrayList, String deckName){
         //יוצר את החפיסה בדטהבייס בפעם הראשונה עבור כל חפיסה בנפרד
@@ -153,7 +122,7 @@ public class FbModule {
         myRef.removeValue();
     }
 
-    private void updateListSafely(DataSnapshot snapshot, ArrayList<Card> list) {
+    private void updateList(DataSnapshot snapshot, ArrayList<Card> list) {
         ArrayList<Card> tempList = new ArrayList<>(); // רשימה זמנית
         for (DataSnapshot child : snapshot.getChildren()) {
             Card card = child.getValue(Card.class);
