@@ -4,12 +4,17 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 
 import androidx.annotation.NonNull;
 
 import com.example.ratatatcat.R;
 import com.example.ratatatcat.activities.GameActivity;
+import com.example.ratatatcat.model.Card;
+
+import java.util.ArrayList;
 
 public class BoardGame extends View {
 
@@ -19,12 +24,18 @@ public class BoardGame extends View {
     private int canvasWidth, canvasHeight;
     private boolean isFirstTime = true;
     public static boolean FbExist = false;
+    private ArrayList<Card> revealedCards;
+    private Handler revealHandler;
 
     public BoardGame(Context context) {
         super(context);
         this.context = context;
         gameModule = new GameModule(context);
         this.setBackgroundResource(R.drawable.gamebackground);
+
+        revealedCards = new ArrayList<Card>();
+        revealHandler = new Handler(Looper.getMainLooper());
+
         if (GameActivity.player == HOST) {
             gameModule.startGame();
         }
@@ -52,49 +63,72 @@ public class BoardGame extends View {
         if (isFirstTime) {
             canvasWidth = canvas.getWidth();
             canvasHeight = canvas.getHeight();
-        }
 
+            // Reveal outer cards (positions 0 and 3) for 5 seconds at game start
+            if (GameActivity.player == HOST) {
+                revealCardTemporarily(gameModule.player1.get(0), 5);
+                revealCardTemporarily(gameModule.player1.get(3), 5);
+            }
+            else {
+                revealCardTemporarily(gameModule.player2.get(0), 5);
+                revealCardTemporarily(gameModule.player2.get(3), 5);
+            }
+        }
         for (int i = 0; i < 4; i++) {
             if (GameActivity.player == HOST) {
-                if (isFirstTime) {
-                    if (i == 0 || i == 3) {
-                        gameModule.player1.get(i).setIdShown(gameModule.player1.get(i).getIdFront());
-                    }
-                }
-                //לבדוק למה זה לא עובד עבור הקלף הרביעי
-
+                // HOST רואה את הקלפים שלו למטה
                 gameModule.player1.get(i).setX((canvasWidth / 4) * i + 35);
                 gameModule.player1.get(i).setY(canvasHeight - 450);
-                Bitmap bitmap1 = BitmapFactory.decodeResource(getResources(), gameModule.player1.get(i).getIdShown());
+
+                //קובע איזה קלפים ברשימה של אלו שיתהפכו
+                int imageToShow;
+                if (isCardRevealed(gameModule.player1.get(i))) {
+                    imageToShow = gameModule.player1.get(i).getIdFront();
+                }
+                else {
+                    imageToShow = gameModule.player1.get(i).getIdShown();
+                }
+
+                Bitmap bitmap1 = BitmapFactory.decodeResource(getResources(), imageToShow);
                 bitmap1 = Bitmap.createScaledBitmap(bitmap1, canvasWidth / 4 - 70, 350, false);
                 gameModule.player1.get(i).Draw(canvas, bitmap1);
 
+                // HOST רואה את קלפי היריב למעלה מוסתרים
                 gameModule.player2.get(i).setX((canvasWidth / 4) * i + 35);
                 gameModule.player2.get(i).setY(200);
+
                 Bitmap bitmap2 = BitmapFactory.decodeResource(getResources(), gameModule.player2.get(i).getIdShown());
                 bitmap2 = Bitmap.createScaledBitmap(bitmap2, canvasWidth / 4 - 70, 350, false);
                 gameModule.player2.get(i).Draw(canvas, bitmap2);
 
             }
+            //אותו הדבר לשחקן השני
             else{
-                if (isFirstTime) {
-                    if (i == 0 || i == 3) {
-                        gameModule.player2.get(i).setIdShown(gameModule.player2.get(i).getIdFront());
-                    }
-                }
+
                 gameModule.player2.get(i).setX((canvasWidth / 4) * i + 35);
                 gameModule.player2.get(i).setY(canvasHeight - 450);
-                Bitmap bitmap1 = BitmapFactory.decodeResource(getResources(), gameModule.player2.get(i).getIdShown());
+
+                int imageToShow;
+                if (isCardRevealed(gameModule.player2.get(i))){
+                    imageToShow = gameModule.player2.get(i).getIdFront();
+                } else {
+                    imageToShow = gameModule.player2.get(i).getIdShown();
+                }
+
+                Bitmap bitmap1 = BitmapFactory.decodeResource(getResources(), imageToShow);
                 bitmap1 = Bitmap.createScaledBitmap(bitmap1, canvasWidth / 4 - 70, 350, false);
                 gameModule.player2.get(i).Draw(canvas, bitmap1);
 
                 gameModule.player1.get(i).setX((canvasWidth / 4) * i + 35);
                 gameModule.player1.get(i).setY(200);
+
                 Bitmap bitmap2 = BitmapFactory.decodeResource(getResources(), gameModule.player1.get(i).getIdShown());
                 bitmap2 = Bitmap.createScaledBitmap(bitmap2, canvasWidth / 4 - 70, 350, false);
                 gameModule.player1.get(i).Draw(canvas, bitmap2);
             }
         }
+
+
 
         gameModule.deck.get(0).setX(canvasWidth-250);
         gameModule.deck.get(0).setY((canvasHeight/2)-140);
@@ -121,5 +155,28 @@ public class BoardGame extends View {
 
     public void setChanges() {
         invalidate();
+    }
+
+    //הפעולה שכתבתי מקבלת קלף ומוסיפה לרשימה של אלו שצריכים להיות חשופים ולכמה זמן
+    //אחכ כשבודקים אם הקלפים ברשימה הם מקבלים את הID של הקדימה
+    //לבסוף ההנדלר נקרא שוב ומוציא אותם מהרשימה
+    public void revealCardTemporarily(final Card card, int seconds) {
+        // הוספת הקלף ללרשימה
+        revealedCards.add(card);
+
+        // קורא שוב לONDRAW כאשר הוא כרגע מיועד להיות הפוך
+        invalidate();
+
+        // ההנדלר מוציא את הקלף מהרשימה לאחר X מילי שניות
+        revealHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                revealedCards.remove(card);
+                invalidate(); //ההוצאה
+            }
+        }, seconds * 1000); // הפיכה למילי שניות
+    }
+    private boolean isCardRevealed(Card card) {
+        return revealedCards.contains(card);
     }
 }
