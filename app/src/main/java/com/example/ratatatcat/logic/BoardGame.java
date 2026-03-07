@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.os.Handler;
 import android.os.Looper;
+import android.view.MotionEvent;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -28,6 +29,8 @@ public class BoardGame extends View {
     public static boolean FbExist = false;
     private ArrayList<Card> revealedCards;
     private Handler revealHandler;
+    private Card drawnCard = null; // הקלף שנמצא כרגע במרכז
+    private boolean isCardDrawn = false; // "מנעול" - מונע משיכה נוספת עד שהנוכחי יטופל
 
     public BoardGame(Context context) {
         super(context);
@@ -66,7 +69,6 @@ public class BoardGame extends View {
             canvasWidth = canvas.getWidth();
             canvasHeight = canvas.getHeight();
 
-            // Reveal outer cards (positions 0 and 3) for 5 seconds at game start
             if (GameActivity.player == HOST) {
                 revealCardTemporarily(gameModule.player1.get(0), 5);
                 revealCardTemporarily(gameModule.player1.get(3), 5);
@@ -150,6 +152,13 @@ public class BoardGame extends View {
             gameModule.trash.get(trashSize-1).Draw(canvas, bitmapTrash);
         }
 
+        // ציור הקלף שנמשך במרכז (אם קיים כזה)
+        if (isCardDrawn && drawnCard != null) {
+            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), drawnCard.getIdShown());
+            bitmap = Bitmap.createScaledBitmap(bitmap, canvasWidth / 4 - 70, 350, false);
+            drawnCard.Draw(canvas, bitmap);
+        }
+
         gameModule.setDecksFromFB();
     }
 
@@ -178,5 +187,42 @@ public class BoardGame extends View {
     }
     private boolean isCardRevealed(Card card) {
         return revealedCards.contains(card);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+
+        if (event.getAction() == android.view.MotionEvent.ACTION_DOWN) {
+            float x = event.getX();
+            float y = event.getY();
+
+            // הגדרות מיקום הקופה (זהות לערכים ב-onDraw שלך)
+            int cardWidth = canvasWidth / 4 - 70;
+            int cardHeight = 350;
+            int deckX = canvasWidth - 250;
+            int deckY = (canvasHeight / 2) - 140;
+
+            // בדיקה: לחיצה בתוך הקופה + חבילה לא ריקה + לא נמשך כבר קלף
+            if (x >= deckX && x <= deckX + cardWidth && y >= deckY && y <= deckY + cardHeight) {
+                if (!isCardDrawn && !GameModule.deck.isEmpty()) {
+
+                    //משיכת הקלף מהרשימה
+                    drawnCard = GameModule.deck.remove(0);
+
+                    //הופכים את הקלף וקובעים מיקום למרכז המסך
+                    drawnCard.setIdShown(drawnCard.getIdFront());
+                    drawnCard.setX((canvasWidth / 2) - (cardWidth / 2));
+                    drawnCard.setY((canvasHeight / 2) - (cardHeight / 2));
+
+                    //עדכון Firebase
+                    isCardDrawn = true;
+                    gameModule.setDecksFromFB(); // מעדכן את היריב שהקופה קטנה
+
+                    invalidate(); // גורם לציור מחדש מיידי
+                    return true;
+                }
+            }
+        }
+        return super.onTouchEvent(event);
     }
 }
