@@ -73,4 +73,25 @@ public class Card {
     public void Draw(Canvas canvas , Bitmap bitmap){
         canvas.drawBitmap(bitmap, x, y, null);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Card card = (Card) obj;
+        return value == card.value && idFront == card.idFront;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = value;
+        result = 31 * result + idFront;
+        return result;
+    }
+    //דרסתי את פונקציית ההשוואה שמקבל כל עצם (שיורש מאובייקט) כי ההשוואה הרגילה היא לפי רפרנס
+    //וכל פעם שהפיירבייס שומר נתונים הרשימה שלי נטענת עם רפרנסים חדשים
+    //לכן כאשר ניגשתי לפעולה שבודקת אם הקלף בתוך הרשימה של ההפוכים קיבלתי שגיאה כי נשמר שם הרפרנס הישן
+    //לכן משווים עם משהו שלא השתנה
+    //למה הדריסה גם של HASHCODE: כי כאשר אומרים ששני עצמים זהים בEQUALS אז מניחים שגם ההאש קוד זהים
+    // בגלל שההאש קוד היה מספר שתלויי ברפרנס שיניתי שהוא יהיה תלויי בפרמטרים שאיתם אני משווה כעת עצם
 }

@@ -15,6 +15,8 @@ import com.example.ratatatcat.activities.GameActivity;
 import com.example.ratatatcat.model.Card;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class BoardGame extends View {
 
@@ -73,6 +75,7 @@ public class BoardGame extends View {
                 revealCardTemporarily(gameModule.player2.get(0), 5);
                 revealCardTemporarily(gameModule.player2.get(3), 5);
             }
+            isFirstTime = false;
         }
         for (int i = 0; i < 4; i++) {
             if (GameActivity.player == HOST) {
@@ -148,9 +151,6 @@ public class BoardGame extends View {
         }
 
         gameModule.setDecksFromFB();
-        if (isFirstTime) {
-            isFirstTime = false;
-        }
     }
 
     public void setChanges() {
