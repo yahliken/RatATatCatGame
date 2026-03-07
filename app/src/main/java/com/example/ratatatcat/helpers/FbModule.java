@@ -52,6 +52,7 @@ public class FbModule {
         decks.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+
                 if(snapshot.getValue() != null) {
 
                     if (snapshot.child("deck").exists()) {
@@ -70,7 +71,7 @@ public class FbModule {
                     }
 
                     // רק אם כל החפיסות הגיעו, נסמן שהנתונים קיימים
-                    if(snapshot.hasChild("deck") && snapshot.hasChild("player1") && snapshot.hasChild("player2")) {
+                    if(snapshot.hasChild("deck") && snapshot.hasChild("player1") && snapshot.hasChild("player2") && !GameModule.deck.isEmpty() && !GameModule.player1.isEmpty() && !GameModule.player2.isEmpty()) {
                         BoardGame.FbExist = true;
                     }
 
@@ -134,9 +135,5 @@ public class FbModule {
         list.clear();
         list.addAll(tempList);
 
-        //אם הצלחנו למלא רשימה כלשהי, סימן שיש תקשורת
-        if (!list.isEmpty()) {
-            BoardGame.FbExist = true;
-        }
     }
 }

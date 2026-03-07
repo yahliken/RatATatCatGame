@@ -19,10 +19,9 @@ public class GameActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
 
-        instance = FbModule.getInstance(this);
         player =getIntent().getIntExtra("player", 0);
-        boardGame = new BoardGame(this);
         instance = FbModule.getInstance(this);
+        boardGame = new BoardGame(this);
         setContentView(boardGame);
 
     }
