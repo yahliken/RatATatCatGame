@@ -211,11 +211,15 @@ public class BoardGame extends View {
                         && x >= deckX && x <= deckX + cardWidth
                         && y >= deckY && y <= deckY + cardHeight) {
 
+                    //משיכת הקלף מהרשימה
                     drawnCard = GameModule.deck.remove(0);
+
+                    //הופכים את הקלף וקובעים מיקום למרכז המסך
                     drawnCard.setIdShown(drawnCard.getIdFront());
                     drawnCard.setX((canvasWidth / 2f) - (cardWidth / 2f));
                     drawnCard.setY((canvasHeight / 2f) - (cardHeight / 2f));
 
+                    //עדכון Firebase
                     isCardDrawn = true;
                     gameModule.setDecksFromFB();
                     invalidate();
@@ -251,27 +255,67 @@ public class BoardGame extends View {
                 if (isDragging && drawnCard != null) {
                     isDragging = false;
 
-                    // --- בדיקה: האם הקלף הונח על הטראש? ---
-                    int trashX = 50;
-                    int trashY = (canvasHeight / 2) - 140;
-
                     float cardCenterX = drawnCard.getX() + cardWidth / 2f;
                     float cardCenterY = drawnCard.getY() + cardHeight / 2f;
+
+                    // --- בדיקה 1: האם הקלף הונח על הטראש? ---
+                    int trashX = 50;
+                    int trashY = (canvasHeight / 2) - 140;
 
                     boolean droppedOnTrash = cardCenterX >= trashX && cardCenterX <= trashX + cardWidth
                             && cardCenterY >= trashY && cardCenterY <= trashY + cardHeight;
 
                     if (droppedOnTrash) {
-                        // הנחה על הטראש
                         GameModule.trash.add(drawnCard);
                         drawnCard = null;
                         isCardDrawn = false;
                         gameModule.setDecksFromFB();
-                    } else {
-                        // חזרה למרכז אם לא הונח על הטראש
+                        invalidate();
+                        return true;
+                    }
+
+                    // --- בדיקה 2: האם הקלף הונח על אחד מקלפי השחקן? ---
+                    // קלפים מיוחדים (ערך שלילי) לא יכולים להחליף קלפי שחקן
+                    if (drawnCard.getValue() < 0) {
                         drawnCard.setX((canvasWidth / 2f) - (cardWidth / 2f));
                         drawnCard.setY((canvasHeight / 2f) - (cardHeight / 2f));
+                        invalidate();
+                        return true;
                     }
+                    // קלפי השחקן תמיד בשורה התחתונה: y = canvasHeight - 450
+                    // x = (canvasWidth / 4) * i + 35, עבור i = 0,1,2,3
+                    ArrayList<Card> myCards = (GameActivity.player == HOST) ? GameModule.player1 : GameModule.player2;
+                    int playerCardY = canvasHeight - 450;
+
+                    int droppedIndex = -1; // האינדקס של הקלף שעליו הונח הקלף הנמשך
+                    for (int i = 0; i < 4; i++) {
+                        int slotX = (canvasWidth / 4) * i + 35;
+                        if (cardCenterX >= slotX && cardCenterX <= slotX + cardWidth
+                                && cardCenterY >= playerCardY && cardCenterY <= playerCardY + cardHeight) {
+                            droppedIndex = i;
+                            break;
+                        }
+                    }
+
+                    if (droppedIndex != -1) {
+                        // שולחים את הקלף הישן לטראש
+                        Card replacedCard = myCards.get(droppedIndex);
+                        GameModule.trash.add(replacedCard);
+
+                        // שמים את הקלף הנמשך במקומו (מוסתר)
+                        drawnCard.setIdShown(drawnCard.getIdBack());
+                        myCards.set(droppedIndex, drawnCard);
+
+                        drawnCard = null;
+                        isCardDrawn = false;
+                        gameModule.setDecksFromFB();
+                        invalidate();
+                        return true;
+                    }
+
+                    // --- לא הונח על שום דבר: חזרה למרכז ---
+                    drawnCard.setX((canvasWidth / 2f) - (cardWidth / 2f));
+                    drawnCard.setY((canvasHeight / 2f) - (cardHeight / 2f));
                     invalidate();
                     return true;
                 }
@@ -279,6 +323,5 @@ public class BoardGame extends View {
             }
         }
         return super.onTouchEvent(event);
-    }
-}
+    }}
 
