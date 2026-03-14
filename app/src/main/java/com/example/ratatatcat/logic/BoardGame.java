@@ -162,7 +162,7 @@ public class BoardGame extends View {
             drawnCard.Draw(canvas, bitmap);
         }
 
-        gameModule.setDecksFromFB();
+        //gameModule.setDecksFromFB();
     }
 
     public void setChanges() {
