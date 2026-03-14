@@ -30,7 +30,9 @@ public class BoardGame extends View {
     private ArrayList<Card> revealedCards;
     private Handler revealHandler;
     private Card drawnCard = null; // הקלף שנמצא כרגע במרכז
-    private boolean isCardDrawn = false; // "מנעול" - מונע משיכה נוספת עד שהנוכחי יטופל
+    private boolean isCardDrawn = false; // מונע משיכה נוספת עד שהנוכחי יטופל
+    private boolean isDragging = false; // האם הקלף נגרר כרגע
+    private float dragOffsetX, dragOffsetY; // ההפרש בין נקודת הלחיצה למיקום הקלף
 
     public BoardGame(Context context) {
         super(context);
@@ -192,38 +194,91 @@ public class BoardGame extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        float x = event.getX();
+        float y = event.getY();
 
-        if (event.getAction() == android.view.MotionEvent.ACTION_DOWN) {
-            float x = event.getX();
-            float y = event.getY();
+        int cardWidth = canvasWidth / 4 - 70;
+        int cardHeight = 350;
 
-            // הגדרות מיקום הקופה (זהות לערכים ב-onDraw שלך)
-            int cardWidth = canvasWidth / 4 - 70;
-            int cardHeight = 350;
-            int deckX = canvasWidth - 250;
-            int deckY = (canvasHeight / 2) - 140;
+        switch (event.getAction()) {
 
-            // בדיקה: לחיצה בתוך הקופה + חבילה לא ריקה + לא נמשך כבר קלף
-            if (x >= deckX && x <= deckX + cardWidth && y >= deckY && y <= deckY + cardHeight) {
-                if (!isCardDrawn && !GameModule.deck.isEmpty()) {
+            case MotionEvent.ACTION_DOWN: {
+                // --- לחיצה על הקופה: משיכת קלף ---
+                int deckX = canvasWidth - 250;
+                int deckY = (canvasHeight / 2) - 140;
 
-                    //משיכת הקלף מהרשימה
+                if (!isCardDrawn && !GameModule.deck.isEmpty()
+                        && x >= deckX && x <= deckX + cardWidth
+                        && y >= deckY && y <= deckY + cardHeight) {
+
                     drawnCard = GameModule.deck.remove(0);
-
-                    //הופכים את הקלף וקובעים מיקום למרכז המסך
                     drawnCard.setIdShown(drawnCard.getIdFront());
-                    drawnCard.setX((canvasWidth / 2) - (cardWidth / 2));
-                    drawnCard.setY((canvasHeight / 2) - (cardHeight / 2));
+                    drawnCard.setX((canvasWidth / 2f) - (cardWidth / 2f));
+                    drawnCard.setY((canvasHeight / 2f) - (cardHeight / 2f));
 
-                    //עדכון Firebase
                     isCardDrawn = true;
-                    gameModule.setDecksFromFB(); // מעדכן את היריב שהקופה קטנה
-
-                    invalidate(); // גורם לציור מחדש מיידי
+                    gameModule.setDecksFromFB();
+                    invalidate();
                     return true;
                 }
+
+                // --- לחיצה על הקלף שנמשך: התחלת גרירה ---
+                if (isCardDrawn && drawnCard != null
+                        && x >= drawnCard.getX() && x <= drawnCard.getX() + cardWidth
+                        && y >= drawnCard.getY() && y <= drawnCard.getY() + cardHeight) {
+
+                    isDragging = true;
+                    // שומרים את ההפרש כדי שהקלף לא "יקפוץ" לאצבע
+                    dragOffsetX = x - drawnCard.getX();
+                    dragOffsetY = y - drawnCard.getY();
+                    return true;
+                }
+                break;
+            }
+
+            case MotionEvent.ACTION_MOVE: {
+                // --- גרירת הקלף ---
+                if (isDragging && drawnCard != null) {
+                    drawnCard.setX(x - dragOffsetX);
+                    drawnCard.setY(y - dragOffsetY);
+                    invalidate();
+                    return true;
+                }
+                break;
+            }
+
+            case MotionEvent.ACTION_UP: {
+                if (isDragging && drawnCard != null) {
+                    isDragging = false;
+
+                    // --- בדיקה: האם הקלף הונח על הטראש? ---
+                    int trashX = 50;
+                    int trashY = (canvasHeight / 2) - 140;
+
+                    float cardCenterX = drawnCard.getX() + cardWidth / 2f;
+                    float cardCenterY = drawnCard.getY() + cardHeight / 2f;
+
+                    boolean droppedOnTrash = cardCenterX >= trashX && cardCenterX <= trashX + cardWidth
+                            && cardCenterY >= trashY && cardCenterY <= trashY + cardHeight;
+
+                    if (droppedOnTrash) {
+                        // הנחה על הטראש
+                        GameModule.trash.add(drawnCard);
+                        drawnCard = null;
+                        isCardDrawn = false;
+                        gameModule.setDecksFromFB();
+                    } else {
+                        // חזרה למרכז אם לא הונח על הטראש
+                        drawnCard.setX((canvasWidth / 2f) - (cardWidth / 2f));
+                        drawnCard.setY((canvasHeight / 2f) - (cardHeight / 2f));
+                    }
+                    invalidate();
+                    return true;
+                }
+                break;
             }
         }
         return super.onTouchEvent(event);
     }
 }
+
