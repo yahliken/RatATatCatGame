@@ -79,13 +79,13 @@ public class Card {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
         Card card = (Card) obj;
-        return value == card.value && idFront == card.idFront;
+        return value == card.value && idFront == card.idFront && x== card.x;
     }
 
     @Override
     public int hashCode() {
         int result = value;
-        result = 31 * result + idFront;
+        result = (int) (31 * result + idFront + x);
         return result;
     }
     //דרסתי את פונקציית ההשוואה שמקבל כל עצם (שיורש מאובייקט) כי ההשוואה הרגילה היא לפי רפרנס
