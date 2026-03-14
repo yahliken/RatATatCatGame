@@ -68,6 +68,7 @@ public class BoardGame extends View {
         if (isFirstTime) {
             canvasWidth = canvas.getWidth();
             canvasHeight = canvas.getHeight();
+            revealedCards.clear();
 
             if (GameActivity.player == HOST) {
                 revealCardTemporarily(gameModule.player1.get(0), 5);
@@ -85,7 +86,7 @@ public class BoardGame extends View {
                 gameModule.player1.get(i).setX((canvasWidth / 4) * i + 35);
                 gameModule.player1.get(i).setY(canvasHeight - 450);
 
-                //קובע איזה קלפים ברשימה של אלו שיתהפכו
+                //בודק איזה קלפים ברשימה של אלו שיתהפכו וקובע את התמונה שנראה ללא לעדכן את הפיירבייס
                 int imageToShow;
                 if (isCardRevealed(gameModule.player1.get(i))) {
                     imageToShow = gameModule.player1.get(i).getIdFront();
