@@ -33,6 +33,7 @@ public class BoardGame extends View {
     private boolean isCardDrawn = false; // מונע משיכה נוספת עד שהנוכחי יטופל
     private boolean isDragging = false; // האם הקלף נגרר כרגע
     private float dragOffsetX, dragOffsetY; // ההפרש בין נקודת הלחיצה למיקום הקלף
+    private boolean isPeekMode = false; // האם השחקן במצב הצצה (לאחר משיכת קלף PEEK)
 
     public BoardGame(Context context) {
         super(context);
@@ -105,7 +106,15 @@ public class BoardGame extends View {
                 gameModule.player2.get(i).setX((canvasWidth / 4) * i + 35);
                 gameModule.player2.get(i).setY(200);
 
-                Bitmap bitmap2 = BitmapFactory.decodeResource(getResources(), gameModule.player2.get(i).getIdShown());
+                //רשום למצב ששחקן הציץ ליריב ואז הקלף יכנס יחשף
+                int imageToShow2;
+                if (isCardRevealed(gameModule.player2.get(i))) {
+                    imageToShow2 = gameModule.player2.get(i).getIdFront();
+                } else {
+                    imageToShow2 = gameModule.player2.get(i).getIdShown();
+                }
+
+                Bitmap bitmap2 = BitmapFactory.decodeResource(getResources(), imageToShow2);
                 bitmap2 = Bitmap.createScaledBitmap(bitmap2, canvasWidth / 4 - 70, 350, false);
                 gameModule.player2.get(i).Draw(canvas, bitmap2);
 
@@ -130,7 +139,15 @@ public class BoardGame extends View {
                 gameModule.player1.get(i).setX((canvasWidth / 4) * i + 35);
                 gameModule.player1.get(i).setY(200);
 
-                Bitmap bitmap2 = BitmapFactory.decodeResource(getResources(), gameModule.player1.get(i).getIdShown());
+                //למצב ששחקן מציץ
+                int imageToShow2;
+                if (isCardRevealed(gameModule.player1.get(i))) {
+                    imageToShow2 = gameModule.player1.get(i).getIdFront();
+                } else {
+                    imageToShow2 = gameModule.player1.get(i).getIdShown();
+                }
+
+                Bitmap bitmap2 = BitmapFactory.decodeResource(getResources(), imageToShow2);
                 bitmap2 = Bitmap.createScaledBitmap(bitmap2, canvasWidth / 4 - 70, 350, false);
                 gameModule.player1.get(i).Draw(canvas, bitmap2);
             }
@@ -192,6 +209,41 @@ public class BoardGame extends View {
         return revealedCards.contains(card);
     }
 
+    // הפעולה מחזירה את הקלף שנלחץ מתוך כל 8 הקלפים על השולחן, או null אם לא נלחץ קלף
+    private Card findTappedCard(float x, float y, int cardWidth, int cardHeight) {
+        int opponentRowY = 200; //שורת קלפים למעלה
+        int myRowY = canvasHeight - 450; //שורת קלפים למטה
+
+        for (int i = 0; i < 4; i++) {
+            int playerCardX = (canvasWidth / 4) * i + 35;
+
+            //  קלפי היריב
+            if (x >= playerCardX && x <= playerCardX + cardWidth
+                    && y >= opponentRowY && y <= opponentRowY + cardHeight) {
+                if (GameActivity.player == HOST){
+                    //כלומר קלפי שחקן 2 עבורו למעלה
+                    return GameModule.player2.get(i);
+                }
+                else {
+                    return GameModule.player1.get(i);
+                }
+            }
+
+            // הקלפים שלי
+            if (x >= playerCardX && x <= playerCardX + cardWidth
+                    && y >= myRowY && y <= myRowY + cardHeight) {
+                if (GameActivity.player == HOST){
+                    //כלומר קלפי שחקן 1 עבורו למטה
+                    return GameModule.player1.get(i);
+                }
+                else {
+                    return GameModule.player2.get(i);
+                }
+            }
+        }
+        return null;
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         float x = event.getX();
@@ -203,7 +255,7 @@ public class BoardGame extends View {
         switch (event.getAction()) {
 
             case MotionEvent.ACTION_DOWN: {
-                // --- לחיצה על הקופה: משיכת קלף ---
+                //  לחיצה על הקופה ומשיכת קלף
                 int deckX = canvasWidth - 250;
                 int deckY = (canvasHeight / 2) - 140;
 
@@ -221,18 +273,39 @@ public class BoardGame extends View {
 
                     //עדכון Firebase
                     isCardDrawn = true;
+                    // אם הקלף הנמשך הוא PEEK אז מצב הצצה
+                    if (drawnCard.getValue() == -2) {
+                        isPeekMode = true;
+                    }
                     gameModule.setDecksFromFB();
                     invalidate();
                     return true;
                 }
 
-                // --- לחיצה על הקלף שנמשך: התחלת גרירה ---
+                // אם נלחץ קלף של שחקן ואנחנו במצב הצצה
+                if (isPeekMode) {
+                    // בדיקת הקלף הנלחץ
+                    Card tappedCard = findTappedCard(x, y, cardWidth, cardHeight);
+                    if (tappedCard != null) {
+                        // להפוך את הקלף רק למי שמשך הצץ
+                        revealCardTemporarily(tappedCard, 3);
+                        // זורקים את קלף ה-PEEK לזבל בסוף
+                        GameModule.trash.add(drawnCard);
+                        drawnCard = null;
+                        isCardDrawn = false;
+                        isPeekMode = false;
+                        gameModule.setDecksFromFB();
+                        invalidate();
+                        return true;
+                    }
+                }
+                //  לחיצה על הקלף שנמשך מהקופה והתחלת גרירה
                 if (isCardDrawn && drawnCard != null
                         && x >= drawnCard.getX() && x <= drawnCard.getX() + cardWidth
                         && y >= drawnCard.getY() && y <= drawnCard.getY() + cardHeight) {
 
                     isDragging = true;
-                    // שומרים את ההפרש כדי שהקלף לא "יקפוץ" לאצבע
+                    // לשמור את ההפרש כדי שהקלף לא יקפוץ לאצבע - שהגרירה תהיה לפי מיקום הלחיצה
                     dragOffsetX = x - drawnCard.getX();
                     dragOffsetY = y - drawnCard.getY();
                     return true;
@@ -241,7 +314,7 @@ public class BoardGame extends View {
             }
 
             case MotionEvent.ACTION_MOVE: {
-                // --- גרירת הקלף ---
+                //  גרירת קלף
                 if (isDragging && drawnCard != null) {
                     drawnCard.setX(x - dragOffsetX);
                     drawnCard.setY(y - dragOffsetY);
@@ -258,7 +331,7 @@ public class BoardGame extends View {
                     float cardCenterX = drawnCard.getX() + cardWidth / 2;
                     float cardCenterY = drawnCard.getY() + cardHeight / 2;
 
-                    // --- בדיקה 1: האם הקלף הונח על הטראש? ---
+                    //  האם הקלף נגרר לזבל
                     int trashX = 50;
                     int trashY = (canvasHeight / 2) - 140;
 
@@ -269,40 +342,49 @@ public class BoardGame extends View {
                         GameModule.trash.add(drawnCard);
                         drawnCard = null;
                         isCardDrawn = false;
+                        isPeekMode = false; // אם גררו את ה-PEEK לזבל ללא שימוש בו
                         gameModule.setDecksFromFB();
                         invalidate();
                         return true;
                     }
 
-                    // --- בדיקה 2: האם הקלף הונח על אחד מקלפי השחקן? ---
-                    // קלפים מיוחדים (ערך שלילי) לא יכולים להחליף קלפי שחקן
+                    //  האם הקלף נגרר לאחד מקלפי השחקן
+                    // קלפים מיוחדים (ערך שלילי) לא יכולים - חוזרים למרכז
                     if (drawnCard.getValue() < 0) {
                         drawnCard.setX((canvasWidth / 2) - (cardWidth / 2));
                         drawnCard.setY((canvasHeight / 2) - (cardHeight / 2));
                         invalidate();
                         return true;
                     }
-                    // קלפי השחקן תמיד בשורה התחתונה: y = canvasHeight - 450
-                    // x = (canvasWidth / 4) * i + 35, עבור i = 0,1,2,3
-                    ArrayList<Card> myCards = (GameActivity.player == HOST) ? GameModule.player1 : GameModule.player2;
+                    //בדיקה באיזה רשימת קלפים מדובר לפי השחקן
+                    //לפי הרשימה שהעתקנו נשנה את מיקום הקלף החדש במידה ונגרר לאחד מהם
+                    ArrayList<Card> myCards;
+                    if(GameActivity.player == HOST){
+                        myCards = GameModule.player1;
+                    }
+                    else{
+                        myCards = GameModule.player2;
+                    }
                     int playerCardY = canvasHeight - 450;
 
-                    int droppedIndex = -1; // האינדקס של הקלף שעליו הונח הקלף הנמשך
+                    int droppedIndex = -1; //  האינדקס של הקלף שעליו הונח הקלף הנמשך - ברירת מחדל אף קלף
+                    //מציאת האינדקס של הקלף אליו גררנו
                     for (int i = 0; i < 4; i++) {
-                        int slotX = (canvasWidth / 4) * i + 35;
-                        if (cardCenterX >= slotX && cardCenterX <= slotX + cardWidth
+                        int playerCardX = (canvasWidth / 4) * i + 35;
+                        if (cardCenterX >= playerCardX && cardCenterX <= playerCardX + cardWidth
                                 && cardCenterY >= playerCardY && cardCenterY <= playerCardY + cardHeight) {
                             droppedIndex = i;
                             break;
                         }
                     }
 
+                    //אם נגרר לאחד הקלפים
                     if (droppedIndex != -1) {
-                        // שולחים את הקלף הישן לטראש
+                        // שולחים את הקלף הישן לזבל
                         Card replacedCard = myCards.get(droppedIndex);
                         GameModule.trash.add(replacedCard);
 
-                        // שמים את הקלף הנמשך במקומו (מוסתר)
+                        // שמים את הקלף הנמשך במקומו והפוך
                         drawnCard.setIdShown(drawnCard.getIdBack());
                         myCards.set(droppedIndex, drawnCard);
 
@@ -313,7 +395,7 @@ public class BoardGame extends View {
                         return true;
                     }
 
-                    // --- לא הונח על שום דבר: חזרה למרכז ---
+                    //  לא נגרר על שום דבר - חזרה למרכז
                     drawnCard.setX((canvasWidth / 2) - (cardWidth / 2));
                     drawnCard.setY((canvasHeight / 2) - (cardHeight / 2));
                     invalidate();
