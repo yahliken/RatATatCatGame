@@ -216,8 +216,8 @@ public class BoardGame extends View {
 
                     //הופכים את הקלף וקובעים מיקום למרכז המסך
                     drawnCard.setIdShown(drawnCard.getIdFront());
-                    drawnCard.setX((canvasWidth / 2f) - (cardWidth / 2f));
-                    drawnCard.setY((canvasHeight / 2f) - (cardHeight / 2f));
+                    drawnCard.setX((canvasWidth / 2) - (cardWidth / 2));
+                    drawnCard.setY((canvasHeight / 2) - (cardHeight / 2));
 
                     //עדכון Firebase
                     isCardDrawn = true;
@@ -255,8 +255,8 @@ public class BoardGame extends View {
                 if (isDragging && drawnCard != null) {
                     isDragging = false;
 
-                    float cardCenterX = drawnCard.getX() + cardWidth / 2f;
-                    float cardCenterY = drawnCard.getY() + cardHeight / 2f;
+                    float cardCenterX = drawnCard.getX() + cardWidth / 2;
+                    float cardCenterY = drawnCard.getY() + cardHeight / 2;
 
                     // --- בדיקה 1: האם הקלף הונח על הטראש? ---
                     int trashX = 50;
@@ -277,8 +277,8 @@ public class BoardGame extends View {
                     // --- בדיקה 2: האם הקלף הונח על אחד מקלפי השחקן? ---
                     // קלפים מיוחדים (ערך שלילי) לא יכולים להחליף קלפי שחקן
                     if (drawnCard.getValue() < 0) {
-                        drawnCard.setX((canvasWidth / 2f) - (cardWidth / 2f));
-                        drawnCard.setY((canvasHeight / 2f) - (cardHeight / 2f));
+                        drawnCard.setX((canvasWidth / 2) - (cardWidth / 2));
+                        drawnCard.setY((canvasHeight / 2) - (cardHeight / 2));
                         invalidate();
                         return true;
                     }
@@ -314,8 +314,8 @@ public class BoardGame extends View {
                     }
 
                     // --- לא הונח על שום דבר: חזרה למרכז ---
-                    drawnCard.setX((canvasWidth / 2f) - (cardWidth / 2f));
-                    drawnCard.setY((canvasHeight / 2f) - (cardHeight / 2f));
+                    drawnCard.setX((canvasWidth / 2) - (cardWidth / 2));
+                    drawnCard.setY((canvasHeight / 2) - (cardHeight / 2));
                     invalidate();
                     return true;
                 }
