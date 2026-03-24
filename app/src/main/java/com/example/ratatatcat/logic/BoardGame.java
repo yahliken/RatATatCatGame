@@ -34,6 +34,8 @@ public class BoardGame extends View {
     private boolean isDragging = false; // האם הקלף נגרר כרגע
     private float dragOffsetX, dragOffsetY; // ההפרש בין נקודת הלחיצה למיקום הקלף
     private boolean isPeekMode = false; // האם השחקן במצב הצצה (לאחר משיכת קלף PEEK)
+    private int draw2CardsRemaining = 0; // כמה קלפים נותרו למשוך DRAW2 (0, 1 או 2)
+    private Card draw2Card = null; // קלף ה-DRAW2 עצמו - מוצג בפינה כתזכורת
 
     public BoardGame(Context context) {
         super(context);
@@ -161,6 +163,12 @@ public class BoardGame extends View {
         bitmapDeck = Bitmap.createScaledBitmap(bitmapDeck, canvasWidth / 4 - 70, 350, false);
         gameModule.deck.get(0).Draw(canvas, bitmapDeck);
 
+        // ציור קלף DRAW2 מעל הזבל
+        if (draw2CardsRemaining > 0 && draw2Card != null) {
+            Bitmap bitmapDraw2 = BitmapFactory.decodeResource(getResources(), draw2Card.getIdFront());
+            bitmapDraw2 = Bitmap.createScaledBitmap(bitmapDraw2, canvasWidth / 4 - 70, 350, false);
+            canvas.drawBitmap(bitmapDraw2, 50, (canvasHeight / 2) - 570, null);
+        }
 
         int trashSize = gameModule.trash.size();
         if(trashSize!=0){
@@ -277,6 +285,22 @@ public class BoardGame extends View {
                     if (drawnCard.getValue() == -2) {
                         isPeekMode = true;
                     }
+                    // אם הקלף הנמשך הוא DRAW2 - שולחים לזבל ומתחילים את האפקט
+                    if (drawnCard.getValue() == -1) {
+                        if (draw2CardsRemaining == 0) {
+                            // DRAW2 ראשון - מתחילים את האפקט ושולחים לזבל
+                            draw2Card = drawnCard;
+                            draw2CardsRemaining = 2;
+                        } else {
+                            // DRAW2 שנמשך במהלך אפקט DRAW2 - ישר לזבל, לא מורידים מהמונה
+                            GameModule.trash.add(drawnCard);
+                        }
+                        drawnCard = null;
+                        isCardDrawn = false;
+                        gameModule.setDecksFromFB();
+                        invalidate();
+                        return true;
+                    }
                     gameModule.setDecksFromFB();
                     invalidate();
                     return true;
@@ -294,6 +318,14 @@ public class BoardGame extends View {
                         drawnCard = null;
                         isCardDrawn = false;
                         isPeekMode = false;
+                        // אם אנחנו באפקט DRAW2 - מורידים מהמונה
+                        if (draw2CardsRemaining > 0) {
+                            draw2CardsRemaining--;
+                            if (draw2CardsRemaining == 0) {
+                                GameModule.trash.add(draw2Card);
+                                draw2Card = null;
+                            }
+                        }
                         gameModule.setDecksFromFB();
                         invalidate();
                         return true;
@@ -343,6 +375,15 @@ public class BoardGame extends View {
                         drawnCard = null;
                         isCardDrawn = false;
                         isPeekMode = false; // אם גררו את ה-PEEK לזבל ללא שימוש בו
+                        // אם אנחנו באפקט DRAW2 - מורידים מהמונה
+                        if (draw2CardsRemaining > 0) {
+                            draw2CardsRemaining--;
+                            if (draw2CardsRemaining == 0) {
+                                // האפקט הסתיים - שולחים את קלף ה-DRAW2 לזבל
+                                GameModule.trash.add(draw2Card);
+                                draw2Card = null;
+                            }
+                        }
                         gameModule.setDecksFromFB();
                         invalidate();
                         return true;
@@ -390,6 +431,15 @@ public class BoardGame extends View {
 
                         drawnCard = null;
                         isCardDrawn = false;
+                        // אם אנחנו באפקט DRAW2 - מורידים מהמונה
+                        if (draw2CardsRemaining > 0) {
+                            draw2CardsRemaining--;
+                            if (draw2CardsRemaining == 0) {
+                                // האפקט הסתיים - שולחים את קלף ה-DRAW2 לזבל
+                                GameModule.trash.add(draw2Card);
+                                draw2Card = null;
+                            }
+                        }
                         gameModule.setDecksFromFB();
                         invalidate();
                         return true;
