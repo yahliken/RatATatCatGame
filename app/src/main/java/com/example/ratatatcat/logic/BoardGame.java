@@ -33,8 +33,8 @@ public class BoardGame extends View {
     private boolean isCardDrawn = false; // מונע משיכה נוספת עד שהנוכחי יטופל
     private boolean isDragging = false; // האם הקלף נגרר כרגע
     private float dragOffsetX, dragOffsetY; // ההפרש בין נקודת הלחיצה למיקום הקלף
-    private boolean isPeekMode = false; // האם השחקן במצב הצצה (לאחר משיכת קלף PEEK)
-    private int draw2CardsRemaining = 0; // כמה קלפים נותרו למשוך DRAW2 (0, 1 או 2)
+    private boolean isPeekMode = false; // האם השחקן במצב הצצה (קלף PEEK)
+    private int cardsToDraw = 0; // כמה קלפים נותרו לקחת DRAW2 - (0/1/2)
     private Card draw2Card = null; // קלף ה-DRAW2 עצמו - מוצג בפינה כתזכורת
 
     public BoardGame(Context context) {
@@ -164,7 +164,7 @@ public class BoardGame extends View {
         gameModule.deck.get(0).Draw(canvas, bitmapDeck);
 
         // ציור קלף DRAW2 מעל הזבל
-        if (draw2CardsRemaining > 0 && draw2Card != null) {
+        if (cardsToDraw > 0 && draw2Card != null) {
             Bitmap bitmapDraw2 = BitmapFactory.decodeResource(getResources(), draw2Card.getIdFront());
             bitmapDraw2 = Bitmap.createScaledBitmap(bitmapDraw2, canvasWidth / 4 - 70, 350, false);
             canvas.drawBitmap(bitmapDraw2, 50, (canvasHeight / 2) - 570, null);
@@ -201,7 +201,7 @@ public class BoardGame extends View {
         // הוספת הקלף ללרשימה
         revealedCards.add(card);
 
-        // קורא שוב לONDRAW כאשר הוא כרגע מיועד להיות הפוך
+        // קורא שוב לONDRAW כאשר הוא כרגע מוגדר להיות הפוך
         invalidate();
 
         // ההנדלר מוציא את הקלף מהרשימה לאחר X מילי שניות
@@ -285,14 +285,14 @@ public class BoardGame extends View {
                     if (drawnCard.getValue() == -2) {
                         isPeekMode = true;
                     }
-                    // אם הקלף הנמשך הוא DRAW2 - שולחים לזבל ומתחילים את האפקט
+                    // אם הקלף הנמשך הוא DRAW2
                     if (drawnCard.getValue() == -1) {
-                        if (draw2CardsRemaining == 0) {
-                            // DRAW2 ראשון - מתחילים את האפקט ושולחים לזבל
+                        if (cardsToDraw == 0) {
+                            // בודקים אם אין קלף DRAW2 פתוח לפי התנאי
                             draw2Card = drawnCard;
-                            draw2CardsRemaining = 2;
+                            cardsToDraw = 2;
                         } else {
-                            // DRAW2 שנמשך במהלך אפקט DRAW2 - ישר לזבל, לא מורידים מהמונה
+                            // אם קיבלנו DRAW2 בתוך DRAW2 הוא הולך לזבל ולא מורידים מהכמות קלפים שיש עוד לקחת
                             GameModule.trash.add(drawnCard);
                         }
                         drawnCard = null;
@@ -318,10 +318,11 @@ public class BoardGame extends View {
                         drawnCard = null;
                         isCardDrawn = false;
                         isPeekMode = false;
-                        // אם אנחנו באפקט DRAW2 - מורידים מהמונה
-                        if (draw2CardsRemaining > 0) {
-                            draw2CardsRemaining--;
-                            if (draw2CardsRemaining == 0) {
+                        // אם זה חלק מ DRAW2 - מורידים מכמות הקלפים שיש לקחת
+                        if (cardsToDraw > 0) {
+                            cardsToDraw--;
+                            if (cardsToDraw == 0) {
+                                //אם זה היה הקלף האחרון זורקים לזבל את DRAW2
                                 GameModule.trash.add(draw2Card);
                                 draw2Card = null;
                             }
@@ -357,29 +358,30 @@ public class BoardGame extends View {
             }
 
             case MotionEvent.ACTION_UP: {
+                //אם היינו במצב גרירה של קלף קיים
                 if (isDragging && drawnCard != null) {
                     isDragging = false;
 
                     float cardCenterX = drawnCard.getX() + cardWidth / 2;
                     float cardCenterY = drawnCard.getY() + cardHeight / 2;
 
-                    //  האם הקלף נגרר לזבל
                     int trashX = 50;
                     int trashY = (canvasHeight / 2) - 140;
 
                     boolean droppedOnTrash = cardCenterX >= trashX && cardCenterX <= trashX + cardWidth
                             && cardCenterY >= trashY && cardCenterY <= trashY + cardHeight;
 
+                    //  האם הקלף נגרר לזבל
                     if (droppedOnTrash) {
                         GameModule.trash.add(drawnCard);
                         drawnCard = null;
                         isCardDrawn = false;
                         isPeekMode = false; // אם גררו את ה-PEEK לזבל ללא שימוש בו
-                        // אם אנחנו באפקט DRAW2 - מורידים מהמונה
-                        if (draw2CardsRemaining > 0) {
-                            draw2CardsRemaining--;
-                            if (draw2CardsRemaining == 0) {
-                                // האפקט הסתיים - שולחים את קלף ה-DRAW2 לזבל
+                        // אם זה חלק מ DRAW2 - מורידים מכמות הקלפים שיש לקחת
+                        if (cardsToDraw > 0) {
+                            cardsToDraw--;
+                            if (cardsToDraw == 0) {
+                                // אם זה  היה הקלף האחרון זורקים את DRAW2 לזבל
                                 GameModule.trash.add(draw2Card);
                                 draw2Card = null;
                             }
@@ -431,11 +433,11 @@ public class BoardGame extends View {
 
                         drawnCard = null;
                         isCardDrawn = false;
-                        // אם אנחנו באפקט DRAW2 - מורידים מהמונה
-                        if (draw2CardsRemaining > 0) {
-                            draw2CardsRemaining--;
-                            if (draw2CardsRemaining == 0) {
-                                // האפקט הסתיים - שולחים את קלף ה-DRAW2 לזבל
+                        // אם זה כחלק מ DRAW2 - מורידים מהקלפים שיש לקחת
+                        if (cardsToDraw > 0) {
+                            cardsToDraw--;
+                            if (cardsToDraw == 0) {
+                                // אם זה הקלף האחרון נזרוק לזבל את DRAW2
                                 GameModule.trash.add(draw2Card);
                                 draw2Card = null;
                             }
