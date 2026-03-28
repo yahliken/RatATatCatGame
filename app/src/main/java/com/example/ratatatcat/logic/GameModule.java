@@ -14,8 +14,10 @@ import java.util.Random;
 public class GameModule {
     private final int DRAW2 = -1, PEEK = -2, SWAP = -3;
     public static ArrayList<Card> deck = new ArrayList<Card>(), trash = new ArrayList<Card>(), player1 = new ArrayList<Card>(), player2 = new ArrayList<Card>();
+    public static int currentTurn = 0; // מנהל מתחיל -0 ומצטרף זה -1
     private Context context;
     private FbModule instance;
+
     public GameModule(Context context) {
         this.context = context;
     }

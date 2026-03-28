@@ -37,17 +37,17 @@ public class FbModule {
             ClearFb();
         }
 
-        /* turnCount.addValueEventListener(new ValueEventListener() {
+        turnCount.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-
+                if (snapshot.getValue() != null) {
+                    GameModule.currentTurn = ((Long) snapshot.getValue()).intValue();
+                }
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });*/
+            public void onCancelled(@NonNull DatabaseError error) {}
+        });
 
         decks.addValueEventListener(new ValueEventListener() {
             @Override
@@ -142,6 +142,14 @@ public class FbModule {
         myRef.removeValue();
         // מנקים גם את הודעת ה-SWAP כדי שהשחקן החדש לא יקבל Toast ישן
         swapInfo.removeValue();
+
+        // בתחילת משחק ביצירת פיירבייס נגדיר שמנהל משחק ראשון
+        turnCount.setValue(0);
+    }
+
+    // מעביר את התור לשחקן הבא לאחר סיום מהלכים בתור
+    public void setNewMove(int nextPlayer) {
+        turnCount.setValue(nextPlayer);
     }
 
     //  שולח הודעת החלפה לפיירבייס כדי שהיריב יקבל Toast - יכנס לONDATA אחרי השינוי

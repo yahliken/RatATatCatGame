@@ -270,6 +270,9 @@ public class BoardGame extends View {
         switch (event.getAction()) {
 
             case MotionEvent.ACTION_DOWN: {
+                // אם לא התור של השחקן הזה נתעלם
+                if (GameModule.currentTurn != GameActivity.player) return true;
+
                 //  לחיצה על הקופה ומשיכת קלף
                 int deckX = canvasWidth - 250;
                 int deckY = (canvasHeight / 2) - 140;
@@ -316,7 +319,7 @@ public class BoardGame extends View {
                     return true;
                 }
 
-                // אם נלחץ קלף של שחקן ואנחנו במצב הצצה
+                // אם נלחץ קלף של שחקן ונשלף כבר קלף הצץ
                 if (isPeekMode) {
                     // בדיקת הקלף הנלחץ
                     Card tappedCard = findTappedCard(x, y, cardWidth, cardHeight);
@@ -335,7 +338,14 @@ public class BoardGame extends View {
                                 //אם זה היה הקלף האחרון זורקים לזבל את DRAW2
                                 GameModule.trash.add(draw2Card);
                                 draw2Card = null;
+                                // נגמר תור
+                                FbModule.getInstance(context).setNewMove(1 - GameActivity.player);
                             }
+                            // אם עוד נשארו קלפים לקחת ב DRAW2 לא מעבירים תור
+                        }
+                        else {
+                            // אם זה היה קלף בודד פשוט נעביר תור בסיום
+                            FbModule.getInstance(context).setNewMove(1 - GameActivity.player);
                         }
                         gameModule.setDecksFromFB();
                         invalidate();
@@ -464,6 +474,8 @@ public class BoardGame extends View {
                         swapDraggedIndex = -1; // איפוס בסוף כי השתמשתי בו בTOAST
                         //קריאה לONDRAW
                         gameModule.setDecksFromFB();
+                        // סיום חילוף והעברת תור
+                        fbModule.setNewMove(1 - GameActivity.player);
                         invalidate();
                         return true;
                     }
@@ -504,7 +516,14 @@ public class BoardGame extends View {
                                 // אם זה  היה הקלף האחרון זורקים את DRAW2 לזבל
                                 GameModule.trash.add(draw2Card);
                                 draw2Card = null;
+                                // הקלף נזרק והתור נגמר
+                                FbModule.getInstance(context).setNewMove(1 - GameActivity.player);
                             }
+                            // אם נשארו קלפים לקחת ב DRAW2 לא מעבירים תור
+                        }
+                        else {
+                            // סיום תור רגיל
+                            FbModule.getInstance(context).setNewMove(1 - GameActivity.player);
                         }
                         gameModule.setDecksFromFB();
                         invalidate();
@@ -560,7 +579,14 @@ public class BoardGame extends View {
                                 // אם זה הקלף האחרון נזרוק לזבל את DRAW2
                                 GameModule.trash.add(draw2Card);
                                 draw2Card = null;
+                                // נגמר המהלכים והתור
+                                FbModule.getInstance(context).setNewMove(1 - GameActivity.player);
                             }
+                            // אם נשאר קלפים לקחת ב DRAW2 לא נעביר תור
+                        }
+                        else {
+                            // סיום תור רגיל
+                            FbModule.getInstance(context).setNewMove(1 - GameActivity.player);
                         }
                         gameModule.setDecksFromFB();
                         invalidate();
