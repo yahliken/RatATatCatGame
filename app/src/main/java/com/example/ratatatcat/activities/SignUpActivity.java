@@ -58,6 +58,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     public void onClick(View view) {
         if(view == tvSwitchToLogIn){
             viewFlipper.showNext();
+            etUserNameL.requestFocus(); //כדי שהסמן של העכבר ישר יהיה על השדה
         }
         else if (view == tvSwitchToSignUp){
             viewFlipper.showPrevious();

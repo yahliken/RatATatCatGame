@@ -8,11 +8,13 @@ import com.example.ratatatcat.activities.GameActivity;
 import com.example.ratatatcat.logic.BoardGame;
 import com.example.ratatatcat.logic.GameModule;
 import com.example.ratatatcat.model.Card;
+import com.example.ratatatcat.model.SwapInfo;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -21,20 +23,18 @@ public class FbModule {
     private static FbModule instance;
     private Context context;
     FirebaseDatabase firebaseDatabase;
-    /*DatabaseReference users;*/
-    DatabaseReference decks, turnCount;
+    DatabaseReference decks, turnCount, swapInfo;
 
     private FbModule(Context context) {
         this.context = context;
         firebaseDatabase = FirebaseDatabase.getInstance(fbUrl);
-        /*users = firebaseDatabase.getReference("users");*/
         decks = firebaseDatabase.getReference("decks");
         turnCount = firebaseDatabase.getReference("turnCount");
-
+        swapInfo = firebaseDatabase.getReference("swapInfo");
 
         if(GameActivity.player== BoardGame.HOST)
         {
-            ClearDecksFromFb();
+            ClearFb();
         }
 
         /* turnCount.addValueEventListener(new ValueEventListener() {
@@ -94,6 +94,25 @@ public class FbModule {
 
             }
         });
+
+        // מציג Toast עם הפרטים על ההחלפה
+        swapInfo.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.getValue() == null) return;
+
+                SwapInfo info = snapshot.getValue(SwapInfo.class);
+
+                // נקפיץ Toast רק ליריב כי השני כבר קיבל
+                if (GameActivity.player != info.getSwappingPlayer()) {
+                    String massage = "Your " + (info.getOpponentIndex() +1) + " card was swapped with opponent's " + (info.getMyIndex() + 1) + " card" ;
+                    Toast.makeText(context, massage, Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {}
+        });
     }
 
     public static FbModule getInstance(Context context) {
@@ -117,10 +136,17 @@ public class FbModule {
     }
 
 
-    public void ClearDecksFromFb(){
+    public void ClearFb(){
         //יוצר את החפיסה בדטהבייס בפעם הראשונה עבור כל חפיסה בנפרד
         DatabaseReference myRef = firebaseDatabase.getReference("decks");
         myRef.removeValue();
+        // מנקים גם את הודעת ה-SWAP כדי שהשחקן החדש לא יקבל Toast ישן
+        swapInfo.removeValue();
+    }
+
+    //  שולח הודעת החלפה לפיירבייס כדי שהיריב יקבל Toast - יכנס לONDATA אחרי השינוי
+    public void updateSwap(int myIndex, int opponentIndex, int swappingPlayer) {
+        swapInfo.setValue(new SwapInfo(myIndex, opponentIndex, swappingPlayer));
     }
 
     private void updateList(DataSnapshot snapshot, ArrayList<Card> list) {

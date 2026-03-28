@@ -16,8 +16,8 @@ import com.example.ratatatcat.activities.GameActivity;
 import com.example.ratatatcat.model.Card;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
+import android.widget.Toast;
+import com.example.ratatatcat.helpers.FbModule;
 
 public class BoardGame extends View {
 
@@ -33,9 +33,12 @@ public class BoardGame extends View {
     private boolean isCardDrawn = false; // מונע משיכה נוספת עד שהנוכחי יטופל
     private boolean isDragging = false; // האם הקלף נגרר כרגע
     private float dragOffsetX, dragOffsetY; // ההפרש בין נקודת הלחיצה למיקום הקלף
-    private boolean isPeekMode = false; // האם השחקן במצב הצצה (קלף PEEK)
+    private boolean isPeekMode = false; // האם יצא קלף PEEK
     private int cardsToDraw = 0; // כמה קלפים נותרו לקחת DRAW2 - (0/1/2)
-    private Card draw2Card = null; // קלף ה-DRAW2 עצמו - מוצג בפינה כתזכורת
+    private Card draw2Card = null; // קלף ה-DRAW2 עצמו - מוצג בפינה
+    private boolean isSwapMode = false; // האם יצא קלף SWAP
+    private Card swapDraggedCard = null; // הקלף של השחקן שנגרר להחלפה
+    private int swapDraggedIndex = -1; //  האינדקס של הקלף שנגרר (לפניה)
 
     public BoardGame(Context context) {
         super(context);
@@ -88,9 +91,11 @@ public class BoardGame extends View {
         for (int i = 0; i < 4; i++) {
             if (GameActivity.player == HOST) {
                 // HOST רואה את הקלפים שלו למטה
-                gameModule.player1.get(i).setX((canvasWidth / 4) * i + 35);
-                gameModule.player1.get(i).setY(canvasHeight - 450);
-
+                // אם עכשיו גוררים קלף בSWAP אז לא נעדכן לקלף הנגרר מיקום לזה שפה (התחלתי)
+                if (!isSwapMode || swapDraggedIndex != i) {
+                    gameModule.player1.get(i).setX((canvasWidth / 4) * i + 35);
+                    gameModule.player1.get(i).setY(canvasHeight - 450);
+                }
                 //בודק איזה קלפים ברשימה של אלו שיתהפכו וקובע את התמונה שנראה ללא לעדכן את הפיירבייס
                 int imageToShow;
                 if (isCardRevealed(gameModule.player1.get(i))) {
@@ -123,9 +128,11 @@ public class BoardGame extends View {
             }
             //אותו הדבר לשחקן השני
             else{
-
-                gameModule.player2.get(i).setX((canvasWidth / 4) * i + 35);
-                gameModule.player2.get(i).setY(canvasHeight - 450);
+                // אם עכשיו גוררים קלף כחלק מSWAP אז לא נעדכן לנגרר את המיקום למה שפה (להתחלתי)
+                if (!isSwapMode || swapDraggedIndex != i) {
+                    gameModule.player2.get(i).setX((canvasWidth / 4) * i + 35);
+                    gameModule.player2.get(i).setY(canvasHeight - 450);
+                }
 
                 int imageToShow;
                 if (isCardRevealed(gameModule.player2.get(i))){
@@ -267,8 +274,7 @@ public class BoardGame extends View {
                 int deckX = canvasWidth - 250;
                 int deckY = (canvasHeight / 2) - 140;
 
-                if (!isCardDrawn && !GameModule.deck.isEmpty()
-                        && x >= deckX && x <= deckX + cardWidth
+                if (!isCardDrawn && !GameModule.deck.isEmpty() && x >= deckX && x <= deckX + cardWidth
                         && y >= deckY && y <= deckY + cardHeight) {
 
                     //משיכת הקלף מהרשימה
@@ -281,9 +287,13 @@ public class BoardGame extends View {
 
                     //עדכון Firebase
                     isCardDrawn = true;
-                    // אם הקלף הנמשך הוא PEEK אז מצב הצצה
+                    // אם הקלף הנמשך הוא PEEK אז שנדע שהוא נשלף
                     if (drawnCard.getValue() == -2) {
                         isPeekMode = true;
+                    }
+                    // אם הקלף הנמשך הוא SWAP
+                    if (drawnCard.getValue() == -3) {
+                        isSwapMode = true;
                     }
                     // אם הקלף הנמשך הוא DRAW2
                     if (drawnCard.getValue() == -1) {
@@ -333,8 +343,7 @@ public class BoardGame extends View {
                     }
                 }
                 //  לחיצה על הקלף שנמשך מהקופה והתחלת גרירה
-                if (isCardDrawn && drawnCard != null
-                        && x >= drawnCard.getX() && x <= drawnCard.getX() + cardWidth
+                if (isCardDrawn && drawnCard != null && x >= drawnCard.getX() && x <= drawnCard.getX() + cardWidth
                         && y >= drawnCard.getY() && y <= drawnCard.getY() + cardHeight) {
 
                     isDragging = true;
@@ -343,14 +352,55 @@ public class BoardGame extends View {
                     dragOffsetY = y - drawnCard.getY();
                     return true;
                 }
+
+                // אם לחצנו על קלף כאשר נשלף SWAP נתחיל גרירה
+                if (isSwapMode && !isDragging && swapDraggedCard == null) {
+                    ArrayList<Card> myCards;
+                    //בדיקה איזה רשימה גוררים ממנה
+                    if(GameActivity.player == HOST){
+                        myCards = GameModule.player1;
+                    }
+                    else{
+                        myCards = GameModule.player2;
+                    }
+                    int playerCardY = canvasHeight - 450;
+                    //בדיקה האם לחצתי על קלף משלי
+                    for (int i = 0; i < 4; i++) {
+                        int playerCardX = (canvasWidth / 4) * i + 35;
+                        if (x >= playerCardX && x <= playerCardX + cardWidth && y >= playerCardY && y <= playerCardY + cardHeight) {
+                            swapDraggedCard = myCards.get(i);
+                            swapDraggedIndex = i;
+                            isDragging = true;
+                            //כדי שהגרירה תהיה בהתאם לנקודה עליה לחצנו והקלף לא יקפוץ
+                            dragOffsetX = x - swapDraggedCard.getX();
+                            dragOffsetY = y - swapDraggedCard.getY();
+                            return true;
+                        }
+                    }
+                }
+
                 break;
             }
 
             case MotionEvent.ACTION_MOVE: {
                 //  גרירת קלף
-                if (isDragging && drawnCard != null) {
+                if (isDragging && drawnCard != null && !isSwapMode) {
                     drawnCard.setX(x - dragOffsetX);
                     drawnCard.setY(y - dragOffsetY);
+                    invalidate();
+                    return true;
+                }
+                // גרירת קלף ה-SWAP עצמו לזבל
+                if (isDragging && isSwapMode && swapDraggedCard == null && drawnCard != null) {
+                    drawnCard.setX(x - dragOffsetX);
+                    drawnCard.setY(y - dragOffsetY);
+                    invalidate();
+                    return true;
+                }
+                // גרירת קלף מחפיסת השחקן ב SWAP
+                if (isDragging && isSwapMode && swapDraggedCard != null) {
+                    swapDraggedCard.setX(x - dragOffsetX);
+                    swapDraggedCard.setY(y - dragOffsetY);
                     invalidate();
                     return true;
                 }
@@ -358,6 +408,75 @@ public class BoardGame extends View {
             }
 
             case MotionEvent.ACTION_UP: {
+                //  סיום גרירה ב SWAP
+                if (isDragging && isSwapMode && swapDraggedCard != null) {
+                    isDragging = false;
+
+                    float cardCenterX = swapDraggedCard.getX() + cardWidth / 2;
+                    float cardCenterY = swapDraggedCard.getY() + cardHeight / 2;
+
+                    //  האם הקלף הונח על אחד מקלפי היריב
+                    ArrayList<Card> myCards, opponentCards;
+                    if(GameActivity.player == HOST){
+                        myCards = GameModule.player1;
+                        opponentCards = GameModule.player2;
+                    }
+                    else {
+                        myCards = GameModule.player2;
+                        opponentCards = GameModule.player1;
+                    }
+
+                    int opponentCardY = 200;
+                    int opponentIndex = -1; // המיקום עליו הונח הקלף - ברירת מחדל אף אחד
+
+                    //מציאת אינדקס הקלף שאליו גררו
+                    for (int i = 0; i < 4; i++) {
+                        int opponentCardX = (canvasWidth / 4) * i + 35;
+                        if (cardCenterX >= opponentCardX && cardCenterX <= opponentCardX + cardWidth
+                                && cardCenterY >= opponentCardY && cardCenterY <= opponentCardY + cardHeight) {
+                            opponentIndex = i;
+                            break;
+                        }
+                    }
+
+                    //אם הקלף הנגרר הונח על קלף יריב
+                    if (opponentIndex != -1) {
+                        // שמירה במיקום קלף היריב שהנחנו עליו את הקלף הנגרר
+                        Card opponentCard = opponentCards.get(opponentIndex);
+                        opponentCards.set(opponentIndex, swapDraggedCard);
+                        myCards.set(swapDraggedIndex, opponentCard);
+
+                        // קלף SWAP הולך לזבל
+                        GameModule.trash.add(drawnCard);
+                        drawnCard = null;
+                        isCardDrawn = false;
+                        isSwapMode = false;
+                        swapDraggedCard = null;
+
+                        // TOAST למכשיר הזה
+                        String myMsg = "Swap done — your " + (swapDraggedIndex + 1) + " card swapped with opponent's " + (opponentIndex + 1) + " card";
+                        Toast.makeText(context, myMsg, Toast.LENGTH_LONG).show();
+
+                        // עדכון פיירבייס דרך פעולה שתוביל לONDATA שם היריב יקבל גם TOAST
+                        FbModule fbModule = FbModule.getInstance(context);
+                        fbModule.updateSwap(swapDraggedIndex, opponentIndex, GameActivity.player);
+
+                        swapDraggedIndex = -1; // איפוס בסוף כי השתמשתי בו בTOAST
+                        //קריאה לONDRAW
+                        gameModule.setDecksFromFB();
+                        invalidate();
+                        return true;
+                    }
+
+                    // מחזירים את הקלף למקומו הרגיל אם לא נגרר על קלף יריב
+                    swapDraggedCard.setX((canvasWidth / 4f) * swapDraggedIndex + 35);
+                    swapDraggedCard.setY(canvasHeight - 450);
+                    swapDraggedCard = null;
+                    swapDraggedIndex = -1;
+                    invalidate();
+                    return true;
+                }
+
                 //אם היינו במצב גרירה של קלף קיים
                 if (isDragging && drawnCard != null) {
                     isDragging = false;
@@ -376,7 +495,8 @@ public class BoardGame extends View {
                         GameModule.trash.add(drawnCard);
                         drawnCard = null;
                         isCardDrawn = false;
-                        isPeekMode = false; // אם גררו את ה-PEEK לזבל ללא שימוש בו
+                        isPeekMode = false; // אם גררו את PEEK לזבל ללא שימוש בו
+                        isSwapMode = false; // אם גררו את SWAP לזבל ללא שימוש בו
                         // אם זה חלק מ DRAW2 - מורידים מכמות הקלפים שיש לקחת
                         if (cardsToDraw > 0) {
                             cardsToDraw--;
