@@ -120,4 +120,13 @@ public class GameModule {
         instance = FbModule.getInstance(context);
     }
 
+    public void fillDeck(){
+        while (trash.size() > 0){
+            Card c = trash.remove(0);
+            c.setIdShown(c.getIdBack());
+            deck.add(c);
+        }
+        shuffle();
+    }
+
 }

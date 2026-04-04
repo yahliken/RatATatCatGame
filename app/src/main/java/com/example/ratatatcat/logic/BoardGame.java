@@ -277,9 +277,10 @@ public class BoardGame extends View {
                 int deckX = canvasWidth - 250;
                 int deckY = (canvasHeight / 2) - 140;
 
-                if (!isCardDrawn && !GameModule.deck.isEmpty() && x >= deckX && x <= deckX + cardWidth
-                        && y >= deckY && y <= deckY + cardHeight) {
-
+                if (!isCardDrawn && x >= deckX && x <= deckX + cardWidth && y >= deckY && y <= deckY + cardHeight) {
+                    if(GameModule.deck.size() == 1){
+                        gameModule.fillDeck();
+                    }
                     //משיכת הקלף מהרשימה
                     drawnCard = GameModule.deck.remove(0);
 
@@ -475,7 +476,7 @@ public class BoardGame extends View {
                         //קריאה לONDRAW
                         gameModule.setDecksFromFB();
                         // סיום חילוף והעברת תור
-                        fbModule.setNewMove(1 - GameActivity.player);
+                        fbModule.setNewMove(1 - GameActivity.player); //לא צריך GET INSTANCE כי הגדרנו פה את הפיירבייס
                         invalidate();
                         return true;
                     }
