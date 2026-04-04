@@ -127,6 +127,7 @@ public class GameModule {
             deck.add(c);
         }
         shuffle();
+
     }
 
 }

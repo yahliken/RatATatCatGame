@@ -69,6 +69,10 @@ public class FbModule {
                     if (snapshot.child("trash").exists()) {
                         updateList(snapshot.child("trash"), GameModule.trash);
                     }
+                    else {
+                        //ריקון הרשימה כי זה משום מה ממלא אותה מחדש אחרי שזורקים את הקלף לזבל
+                        GameModule.trash.clear();
+                    }
 
                     // רק אם כל החפיסות הגיעו, נסמן שהנתונים קיימים
                     if(snapshot.hasChild("deck") && snapshot.hasChild("player1") && snapshot.hasChild("player2") && !GameModule.deck.isEmpty() && !GameModule.player1.isEmpty() && !GameModule.player2.isEmpty()) {
