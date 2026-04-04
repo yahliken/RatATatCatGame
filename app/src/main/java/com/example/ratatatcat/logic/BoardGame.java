@@ -16,6 +16,8 @@ import com.example.ratatatcat.activities.GameActivity;
 import com.example.ratatatcat.model.Card;
 
 import java.util.ArrayList;
+
+import android.widget.Button;
 import android.widget.Toast;
 import com.example.ratatatcat.helpers.FbModule;
 
@@ -178,7 +180,7 @@ public class BoardGame extends View {
         }
 
         int trashSize = gameModule.trash.size();
-        if(trashSize!=0){
+        if(trashSize!=0){ //מראה רק את הקלף האחרון שנוסף לזבל
             gameModule.trash.get(trashSize-1).setX(50);
             gameModule.trash.get(trashSize-1).setY((canvasHeight/2)-140);
             gameModule.trash.get(trashSize-1).setIdShown(gameModule.trash.get(trashSize-1).getIdFront());
@@ -186,6 +188,11 @@ public class BoardGame extends View {
             bitmapTrash = Bitmap.createScaledBitmap(bitmapTrash, canvasWidth / 4 - 70, 350, false);
             gameModule.trash.get(trashSize-1).Draw(canvas, bitmapTrash);
         }
+
+        //ציור כפתור סיום
+        Bitmap buttonBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.btn_end);
+        buttonBitmap = Bitmap.createScaledBitmap(buttonBitmap, 400, 150, false);
+        canvas.drawBitmap(buttonBitmap, canvasWidth -450, (canvasHeight/2) +520, null);
 
         // ציור הקלף שנמשך במרכז (אם קיים כזה)
         if (isCardDrawn && drawnCard != null) {
@@ -388,6 +395,13 @@ public class BoardGame extends View {
                             return true;
                         }
                     }
+                }
+
+                int btnEndX = canvasWidth-450;
+                int btnEndY = (canvasHeight/2) +520;
+
+                if(x >= btnEndX && x <= btnEndX + 400 && y >= btnEndY && y <= btnEndY + 150){
+                    Toast.makeText(context, "end", Toast.LENGTH_SHORT).show();
                 }
 
                 break;
