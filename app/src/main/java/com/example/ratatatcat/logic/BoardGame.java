@@ -231,6 +231,38 @@ public class BoardGame extends View {
         return revealedCards.contains(card);
     }
 
+    // חושף את כל 8 הקלפים של שני השחקנים ללא טיימר
+    public void revealAllCards() {
+        revealedCards.clear();
+        for (Card c : GameModule.player1) revealedCards.add(c);
+        for (Card c : GameModule.player2) revealedCards.add(c);
+        invalidate();
+    }
+
+    // מחשב ניקוד ומפעיל את דיאלוג סיום המשחק
+    public void triggerGameOver() {
+        revealAllCards();
+
+        int score1 = 0;
+        for (Card c : GameModule.player1) score1 += c.getValue();
+
+        int score2 = 0;
+        for (Card c : GameModule.player2) score2 += c.getValue();
+
+        int myScore, opponentScore;
+        if (GameActivity.player == HOST) {
+            myScore = score1;
+            opponentScore = score2;
+        } else {
+            myScore = score2;
+            opponentScore = score1;
+        }
+
+        if (context instanceof GameActivity) {
+            ((GameActivity) context).showGameOverDialog(myScore, opponentScore);
+        }
+    }
+
     // הפעולה מחזירה את הקלף שנלחץ מתוך כל 8 הקלפים על השולחן, או null אם לא נלחץ קלף
     private Card findTappedCard(float x, float y, int cardWidth, int cardHeight) {
         int opponentRowY = 200; //שורת קלפים למעלה
@@ -397,11 +429,13 @@ public class BoardGame extends View {
                     }
                 }
 
+                //שחקן יכול ללחוץ חתחתול רק בתורו
                 int btnEndX = canvasWidth-450;
                 int btnEndY = (canvasHeight/2) +520;
 
                 if(x >= btnEndX && x <= btnEndX + 400 && y >= btnEndY && y <= btnEndY + 150){
-                    Toast.makeText(context, "end", Toast.LENGTH_SHORT).show();
+                    FbModule.getInstance(context).setGameOver();
+                    triggerGameOver();
                 }
 
                 break;

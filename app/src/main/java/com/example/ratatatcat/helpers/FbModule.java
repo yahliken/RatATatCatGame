@@ -23,7 +23,7 @@ public class FbModule {
     private static FbModule instance;
     private Context context;
     FirebaseDatabase firebaseDatabase;
-    DatabaseReference decks, turnCount, swapInfo;
+    DatabaseReference decks, turnCount, swapInfo, gameOver;
 
     private FbModule(Context context) {
         this.context = context;
@@ -31,6 +31,7 @@ public class FbModule {
         decks = firebaseDatabase.getReference("decks");
         turnCount = firebaseDatabase.getReference("turnCount");
         swapInfo = firebaseDatabase.getReference("swapInfo");
+        gameOver = firebaseDatabase.getReference("gameOver");
 
         if(GameActivity.player== BoardGame.HOST)
         {
@@ -117,6 +118,28 @@ public class FbModule {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {}
         });
+
+        // מאזין לסיום המשחק - כשהיריב לוחץ על rat-a-tat-cat
+        gameOver.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.getValue() == null){
+                    return;
+                }
+                Boolean isOver = (Boolean) snapshot.getValue();
+                if (isOver != null && isOver && context instanceof GameActivity) {
+                    ((GameActivity) context).runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            ((GameActivity) context).triggerGameOver();
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {}
+        });
     }
 
     public static FbModule getInstance(Context context) {
@@ -147,8 +170,16 @@ public class FbModule {
         // מנקים גם את הודעת ה-SWAP כדי שהשחקן החדש לא יקבל Toast ישן
         swapInfo.removeValue();
 
+        // מנקים את סיום המשחק הקודם
+        gameOver.removeValue();
+
         // בתחילת משחק ביצירת פיירבייס נגדיר שמנהל משחק ראשון
         turnCount.setValue(0);
+    }
+
+    // מסמן בפיירבייס שהמשחק נגמר
+    public void setGameOver() {
+        gameOver.setValue(true);
     }
 
     // מעביר את התור לשחקן הבא לאחר סיום מהלכים בתור
