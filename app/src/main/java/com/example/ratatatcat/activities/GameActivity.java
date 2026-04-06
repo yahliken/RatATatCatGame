@@ -1,5 +1,6 @@
 package com.example.ratatatcat.activities;
 
+import android.app.Dialog;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
@@ -37,25 +38,25 @@ public class GameActivity extends AppCompatActivity {
         boardGame.triggerGameOver();
     }
 
-    // מציג דיאלוג סיום משחק עם תוצאות וכפתור חזרה לבית
+    //  מקפיץ דיאלוג סיום משחק עם תוצאות וכפתור חזרה לMAIN
     public void showGameOverDialog(int myScore, int opponentScore) {
-        String title, message;
+        String title, results;
 
         if (myScore < opponentScore) {
-            title = "You Won!";
+            title = "YOU WON";
         }
         else if (myScore > opponentScore) {
-            title = "You Lost...";
+            title = "YOU LOST";
         }
         else {
             title = "It's a Tie!";
         }
 
-        message = "Your score: " + myScore + "\nOpponent's score: " + opponentScore;
+        results = "Your score: " + myScore + "\nOpponent's score: " + opponentScore;
 
         new AlertDialog.Builder(this)
                 .setTitle(title)
-                .setMessage(message)
+                .setMessage(results)
                 .setCancelable(false)
                 .setPositiveButton("Home", (dialog, which) -> {
                     startActivity(new Intent(this, MainActivity.class));

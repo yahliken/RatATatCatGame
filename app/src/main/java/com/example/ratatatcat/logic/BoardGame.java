@@ -1,5 +1,6 @@
 package com.example.ratatatcat.logic;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -234,32 +235,36 @@ public class BoardGame extends View {
     // חושף את כל 8 הקלפים של שני השחקנים ללא טיימר
     public void revealAllCards() {
         revealedCards.clear();
-        for (Card c : GameModule.player1) revealedCards.add(c);
-        for (Card c : GameModule.player2) revealedCards.add(c);
+        //מוסיפים את כל הקלפים של שניהם לרשימת חשיפה כך שבON DRAW זה יצייר אותם הפוך
+        for (int i = 0; i < 4; i++) {
+            revealedCards.add(gameModule.player1.get(i));
+            revealedCards.add(gameModule.player2.get(i));
+        }
         invalidate();
     }
 
-    // מחשב ניקוד ומפעיל את דיאלוג סיום המשחק
+    // חושף את כל הקלפים ומחשב ניקוד וקורא לדיאלוג סיום משחק
     public void triggerGameOver() {
         revealAllCards();
+        //סכום הקלפים
+        int hostSum = 0, joinSum = 0;
+        for (int i = 0; i < 4; i++) {
+            hostSum += gameModule.player1.get(i).getValue();
+            joinSum += gameModule.player2.get(i).getValue();
+        }
 
-        int score1 = 0;
-        for (Card c : GameModule.player1) score1 += c.getValue();
-
-        int score2 = 0;
-        for (Card c : GameModule.player2) score2 += c.getValue();
-
-        int myScore, opponentScore;
+        //איזה סכום של מי
+        int mySum, opponentSum;
         if (GameActivity.player == HOST) {
-            myScore = score1;
-            opponentScore = score2;
+            mySum = hostSum;
+            opponentSum = joinSum;
         } else {
-            myScore = score2;
-            opponentScore = score1;
+            mySum = joinSum;
+            opponentSum = hostSum;
         }
 
         if (context instanceof GameActivity) {
-            ((GameActivity) context).showGameOverDialog(myScore, opponentScore);
+            ((GameActivity) context).showGameOverDialog(mySum, opponentSum);
         }
     }
 

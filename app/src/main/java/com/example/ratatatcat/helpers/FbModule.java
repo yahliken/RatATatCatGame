@@ -168,10 +168,10 @@ public class FbModule {
         DatabaseReference myRef = firebaseDatabase.getReference("decks");
         myRef.removeValue();
         // מנקים גם את הודעת ה-SWAP כדי שהשחקן החדש לא יקבל Toast ישן
-        swapInfo.removeValue();
+        swapInfo.setValue(null);
 
         // מנקים את סיום המשחק הקודם
-        gameOver.removeValue();
+        gameOver.setValue(false);
 
         // בתחילת משחק ביצירת פיירבייס נגדיר שמנהל משחק ראשון
         turnCount.setValue(0);
