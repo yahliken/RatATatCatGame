@@ -1,6 +1,5 @@
 package com.example.ratatatcat.logic;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -18,7 +17,6 @@ import com.example.ratatatcat.model.Card;
 
 import java.util.ArrayList;
 
-import android.widget.Button;
 import android.widget.Toast;
 import com.example.ratatatcat.helpers.FbModule;
 
@@ -30,8 +28,8 @@ public class BoardGame extends View {
     private int canvasWidth, canvasHeight;
     private boolean isFirstTime = true;
     public static boolean FbExist = false;
-    private ArrayList<Card> revealedCards;
-    private Handler revealHandler;
+    //private ArrayList<Card> revealedCards;
+    //private Handler revealHandler;
     private Card drawnCard = null; // הקלף שנמצא כרגע במרכז
     private boolean isCardDrawn = false; // מונע משיכה נוספת עד שהנוכחי יטופל
     private boolean isDragging = false; // האם הקלף נגרר כרגע
@@ -49,8 +47,8 @@ public class BoardGame extends View {
         gameModule = new GameModule(context);
         this.setBackgroundResource(R.drawable.gamebackground);
 
-        revealedCards = new ArrayList<Card>();
-        revealHandler = new Handler(Looper.getMainLooper());
+        //revealedCards = new ArrayList<Card>();
+        //revealHandler = new Handler(Looper.getMainLooper());
 
         if (GameActivity.player == HOST) {
             gameModule.startGame();
@@ -79,15 +77,15 @@ public class BoardGame extends View {
         if (isFirstTime) {
             canvasWidth = canvas.getWidth();
             canvasHeight = canvas.getHeight();
-            revealedCards.clear();
+            gameModule.revealedCards.clear();
 
             if (GameActivity.player == HOST) {
-                revealCardTemporarily(gameModule.player1.get(0), 5);
-                revealCardTemporarily(gameModule.player1.get(3), 5);
+                gameModule.revealCardTemporarily(gameModule.player1.get(0), 5, this);
+                gameModule.revealCardTemporarily(gameModule.player1.get(3), 5, this);
             }
             else {
-                revealCardTemporarily(gameModule.player2.get(0), 5);
-                revealCardTemporarily(gameModule.player2.get(3), 5);
+                gameModule.revealCardTemporarily(gameModule.player2.get(0), 5, this);
+                gameModule.revealCardTemporarily(gameModule.player2.get(3), 5, this);
             }
             isFirstTime = false;
         }
@@ -101,7 +99,7 @@ public class BoardGame extends View {
                 }
                 //בודק איזה קלפים ברשימה של אלו שיתהפכו וקובע את התמונה שנראה ללא לעדכן את הפיירבייס
                 int imageToShow;
-                if (isCardRevealed(gameModule.player1.get(i))) {
+                if (gameModule.isCardRevealed(gameModule.player1.get(i))) {
                     imageToShow = gameModule.player1.get(i).getIdFront();
                 }
                 else {
@@ -118,7 +116,7 @@ public class BoardGame extends View {
 
                 //רשום למצב ששחקן הציץ ליריב ואז הקלף יכנס יחשף
                 int imageToShow2;
-                if (isCardRevealed(gameModule.player2.get(i))) {
+                if (gameModule.isCardRevealed(gameModule.player2.get(i))) {
                     imageToShow2 = gameModule.player2.get(i).getIdFront();
                 } else {
                     imageToShow2 = gameModule.player2.get(i).getIdShown();
@@ -138,7 +136,7 @@ public class BoardGame extends View {
                 }
 
                 int imageToShow;
-                if (isCardRevealed(gameModule.player2.get(i))){
+                if (gameModule.isCardRevealed(gameModule.player2.get(i))){
                     imageToShow = gameModule.player2.get(i).getIdFront();
                 } else {
                     imageToShow = gameModule.player2.get(i).getIdShown();
@@ -153,7 +151,7 @@ public class BoardGame extends View {
 
                 //למצב ששחקן מציץ
                 int imageToShow2;
-                if (isCardRevealed(gameModule.player1.get(i))) {
+                if (gameModule.isCardRevealed(gameModule.player1.get(i))) {
                     imageToShow2 = gameModule.player1.get(i).getIdFront();
                 } else {
                     imageToShow2 = gameModule.player1.get(i).getIdShown();
@@ -220,43 +218,9 @@ public class BoardGame extends View {
         invalidate();
     }
 
-    //הפעולה מקבלת קלף ומוסיפה לרשימה של אלו שצריכים להיות חשופים ולכמה זמן
-    //אחכ כשבודקים אם הקלפים ברשימה הם מקבלים את הID של הקדימה
-    //לבסוף ההנדלר נקרא שוב ומוציא אותם מהרשימה
-    public void revealCardTemporarily(final Card card, int seconds) {
-        // הוספת הקלף ללרשימה
-        revealedCards.add(card);
-
-        // קורא שוב לONDRAW כאשר הוא כרגע מוגדר להיות הפוך
-        invalidate();
-
-        // ההנדלר מוציא את הקלף מהרשימה לאחר X מילי שניות
-        revealHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                revealedCards.remove(card);
-                invalidate(); //ההוצאה
-            }
-        }, seconds * 1000); // הפיכה למילי שניות
-    }
-    private boolean isCardRevealed(Card card) {
-        return revealedCards.contains(card);
-    }
-
-    // חושף את כל 8 הקלפים של שני השחקנים ללא טיימר
-    public void revealAllCards() {
-        revealedCards.clear();
-        //מוסיפים את כל הקלפים של שניהם לרשימת חשיפה כך שבON DRAW זה יצייר אותם הפוך
-        for (int i = 0; i < 4; i++) {
-            revealedCards.add(gameModule.player1.get(i));
-            revealedCards.add(gameModule.player2.get(i));
-        }
-        invalidate();
-    }
-
     // חושף את כל הקלפים ומחשב ניקוד וקורא לדיאלוג סיום משחק
     public void triggerGameOver() {
-        revealAllCards();
+        gameModule.revealAllCards(this);
         //סכום הקלפים
         int hostSum = 0, joinSum = 0;
         for (int i = 0; i < 4; i++) {
@@ -381,7 +345,7 @@ public class BoardGame extends View {
                     Card tappedCard = findTappedCard(x, y, cardWidth, cardHeight);
                     if (tappedCard != null) {
                         // להפוך את הקלף רק למי שמשך הצץ
-                        revealCardTemporarily(tappedCard, 3);
+                        gameModule.revealCardTemporarily(tappedCard, 3, this);
                         // זורקים את קלף ה-PEEK לזבל בסוף
                         GameModule.trash.add(drawnCard);
                         drawnCard = null;

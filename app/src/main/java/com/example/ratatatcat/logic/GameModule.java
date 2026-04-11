@@ -9,12 +9,16 @@ import com.example.ratatatcat.model.Card;
 import com.google.firebase.database.DataSnapshot;
 
 import java.util.ArrayList;
+import android.os.Handler;
+import android.os.Looper;
 import java.util.Random;
 
 public class GameModule {
     private final int DRAW2 = -1, PEEK = -2, SWAP = -3;
     public static ArrayList<Card> deck = new ArrayList<Card>(), trash = new ArrayList<Card>(), player1 = new ArrayList<Card>(), player2 = new ArrayList<Card>();
     public static int currentTurn = 0; // מנהל מתחיל -0 ומצטרף זה -1
+    public ArrayList<Card> revealedCards = new ArrayList<>();
+    private Handler revealHandler = new Handler(Looper.getMainLooper());
     private Context context;
     private FbModule instance;
 
@@ -129,5 +133,42 @@ public class GameModule {
         shuffle();
 
     }
+
+    //הפעולה מקבלת קלף ומוסיפה לרשימה של אלו שצריכים להיות חשופים ולכמה זמן
+    //אחכ כשבודקים אם הקלפים ברשימה הם מקבלים את הID של הקדימה
+    //לבסוף ההנדלר נקרא שוב ומוציא אותם מהרשימה
+    public void revealCardTemporarily(final Card card, int seconds, BoardGame boardGame) {
+        // הוספת הקלף ללרשימה
+        revealedCards.add(card);
+
+        // קורא שוב לONDRAW כאשר הוא כרגע מוגדר להיות הפוך דרך SETCHANGES
+        if (boardGame != null) {
+            boardGame.setChanges();
+        }
+        // ההנדלר מוציא את הקלף מהרשימה לאחר X מילי שניות
+        revealHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                revealedCards.remove(card);
+                boardGame.setChanges(); //ההוצאה
+            }
+        }, seconds * 1000); // הפיכה למילי שניות
+    }
+
+    public boolean isCardRevealed(Card card) {
+        return revealedCards.contains(card);
+    }
+
+    // חושף את כל 8 הקלפים של שני השחקנים ללא טיימר
+    public void revealAllCards(BoardGame boardGame) {
+        revealedCards.clear();
+        //מוסיפים את כל הקלפים של שניהם לרשימת חשיפה כך שבON DRAW זה יצייר אותם הפוך
+        for (int i = 0; i < 4; i++) {
+            revealedCards.add(player1.get(i));
+            revealedCards.add(player2.get(i));
+        }
+        if (boardGame != null) {
+            boardGame.setChanges();
+        }    }
 
 }
