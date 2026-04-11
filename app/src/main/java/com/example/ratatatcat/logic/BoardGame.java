@@ -243,41 +243,6 @@ public class BoardGame extends View {
         }
     }
 
-    // הפעולה מחזירה את הקלף שנלחץ מתוך כל 8 הקלפים על השולחן, או null אם לא נלחץ קלף
-    private Card findTappedCard(float x, float y, int cardWidth, int cardHeight) {
-        int opponentRowY = 200; //שורת קלפים למעלה
-        int myRowY = canvasHeight - 450; //שורת קלפים למטה
-
-        for (int i = 0; i < 4; i++) {
-            int playerCardX = (canvasWidth / 4) * i + 35;
-
-            //  קלפי היריב
-            if (x >= playerCardX && x <= playerCardX + cardWidth
-                    && y >= opponentRowY && y <= opponentRowY + cardHeight) {
-                if (GameActivity.player == HOST){
-                    //כלומר קלפי שחקן 2 עבורו למעלה
-                    return GameModule.player2.get(i);
-                }
-                else {
-                    return GameModule.player1.get(i);
-                }
-            }
-
-            // הקלפים שלי
-            if (x >= playerCardX && x <= playerCardX + cardWidth
-                    && y >= myRowY && y <= myRowY + cardHeight) {
-                if (GameActivity.player == HOST){
-                    //כלומר קלפי שחקן 1 עבורו למטה
-                    return GameModule.player1.get(i);
-                }
-                else {
-                    return GameModule.player2.get(i);
-                }
-            }
-        }
-        return null;
-    }
-
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         float x = event.getX();
@@ -342,7 +307,7 @@ public class BoardGame extends View {
                 // אם נלחץ קלף של שחקן ונשלף כבר קלף הצץ
                 if (isPeekMode) {
                     // בדיקת הקלף הנלחץ
-                    Card tappedCard = findTappedCard(x, y, cardWidth, cardHeight);
+                    Card tappedCard = gameModule.findTappedCard(x, y, cardWidth, cardHeight, canvasWidth, canvasHeight);
                     if (tappedCard != null) {
                         // להפוך את הקלף רק למי שמשך הצץ
                         gameModule.revealCardTemporarily(tappedCard, 3, this);

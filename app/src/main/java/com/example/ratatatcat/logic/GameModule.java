@@ -169,6 +169,42 @@ public class GameModule {
         }
         if (boardGame != null) {
             boardGame.setChanges();
-        }    }
+        }
+    }
+
+    // הפעולה מחזירה את הקלף שנלחץ מתוך כל 8 הקלפים על השולחן או null אם לא נלחץ קלף
+    public Card findTappedCard(float x, float y, int cardWidth, int cardHeight, int canvasWidth, int canvasHeight) {
+        int opponentRowY = 200; //שורת קלפים למעלה
+        int myRowY = canvasHeight - 450; //שורת קלפים למטה
+
+        for (int i = 0; i < 4; i++) {
+            int playerCardX = (canvasWidth / 4) * i + 35;
+
+            //  קלפי היריב
+            if (x >= playerCardX && x <= playerCardX + cardWidth
+                    && y >= opponentRowY && y <= opponentRowY + cardHeight) {
+                if (GameActivity.player == 0){ // HOST = 0
+                    //כלומר קלפי שחקן 2 עבורו למעלה
+                    return player2.get(i);
+                }
+                else {
+                    return player1.get(i);
+                }
+            }
+
+            // הקלפים שלי
+            if (x >= playerCardX && x <= playerCardX + cardWidth
+                    && y >= myRowY && y <= myRowY + cardHeight) {
+                if (GameActivity.player == 0){ // HOST = 0
+                    //כלומר קלפי שחקן 1 עבורו למטה
+                    return player1.get(i);
+                }
+                else {
+                    return player2.get(i);
+                }
+            }
+        }
+        return null;
+    }
 
 }
