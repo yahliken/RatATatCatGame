@@ -541,13 +541,11 @@ public class BoardGame extends View {
                         }
                         else {
                             // סיום תור רגיל
-                            fbModule.setNewMove(1 - GameActivity.player);
+                            fbModule.setNewMove(1 - GameActivity.player);//לא צריך GET INSTANCE כי הגדרנו פה את הפיירבייס
                         }
 
                         //קריאה לONDRAW
                         gameModule.setDecksFromFB();
-                        // סיום חילוף והעברת תור
-                        fbModule.setNewMove(1 - GameActivity.player); //לא צריך GET INSTANCE כי הגדרנו פה את הפיירבייס
                         invalidate();
                         return true;
                     }

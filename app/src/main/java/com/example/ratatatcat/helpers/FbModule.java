@@ -110,8 +110,8 @@ public class FbModule {
 
                 // נקפיץ Toast רק ליריב כי השני כבר קיבל
                 if (GameActivity.player != info.getSwappingPlayer()) {
-                    String massage = "Your " + (info.getOpponentIndex() +1) + " card was swapped with opponent's " + (info.getMyIndex() + 1) + " card" ;
-                    Toast.makeText(context, massage, Toast.LENGTH_LONG).show();
+                    String opponentSwapInfo = "Your " + (info.getOpponentIndex() +1) + " card was swapped with opponent's " + (info.getMyIndex() + 1) + " card" ;
+                    Toast.makeText(context, opponentSwapInfo, Toast.LENGTH_LONG).show();
                 }
             }
 
