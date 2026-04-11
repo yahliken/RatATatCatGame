@@ -518,14 +518,32 @@ public class BoardGame extends View {
                         swapDraggedCard = null;
 
                         // TOAST למכשיר הזה
-                        String myMsg = "Swap done — your " + (swapDraggedIndex + 1) + " card swapped with opponent's " + (opponentIndex + 1) + " card";
-                        Toast.makeText(context, myMsg, Toast.LENGTH_LONG).show();
+                        String mySwapInfo = "Swap done — your " + (swapDraggedIndex + 1) + " card swapped with opponent's " + (opponentIndex + 1) + " card";
+                        Toast.makeText(context, mySwapInfo, Toast.LENGTH_LONG).show();
 
                         // עדכון פיירבייס דרך פעולה שתוביל לONDATA שם היריב יקבל גם TOAST
                         FbModule fbModule = FbModule.getInstance(context);
                         fbModule.updateSwap(swapDraggedIndex, opponentIndex, GameActivity.player);
 
                         swapDraggedIndex = -1; // איפוס בסוף כי השתמשתי בו בTOAST
+
+                        // אם זה חלק מ DRAW2 - מורידים מכמות הקלפים שיש לקחת
+                        if (cardsToDraw > 0) {
+                            cardsToDraw--;
+                            if (cardsToDraw == 0) {
+                                // אם זה היה הקלף האחרון זורקים לזבל את DRAW2
+                                GameModule.trash.add(draw2Card);
+                                draw2Card = null;
+                                // נגמר תור
+                                fbModule.setNewMove(1 - GameActivity.player);
+                            }
+                            // אם עוד נשארו קלפים לקחת ב DRAW2 לא מעבירים תור
+                        }
+                        else {
+                            // סיום תור רגיל
+                            fbModule.setNewMove(1 - GameActivity.player);
+                        }
+
                         //קריאה לONDRAW
                         gameModule.setDecksFromFB();
                         // סיום חילוף והעברת תור
