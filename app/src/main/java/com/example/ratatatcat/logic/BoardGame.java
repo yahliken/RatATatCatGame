@@ -214,14 +214,13 @@ public class BoardGame extends View {
             drawnCard.Draw(canvas, bitmap);
         }
 
-        //gameModule.setDecksFromFB();
     }
 
     public void setChanges() {
         invalidate();
     }
 
-    //הפעולה שכתבתי מקבלת קלף ומוסיפה לרשימה של אלו שצריכים להיות חשופים ולכמה זמן
+    //הפעולה מקבלת קלף ומוסיפה לרשימה של אלו שצריכים להיות חשופים ולכמה זמן
     //אחכ כשבודקים אם הקלפים ברשימה הם מקבלים את הID של הקדימה
     //לבסוף ההנדלר נקרא שוב ומוציא אותם מהרשימה
     public void revealCardTemporarily(final Card card, int seconds) {
