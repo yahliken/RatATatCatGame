@@ -151,11 +151,6 @@ public class FbModule {
         return instance;
     }
 
-    public void setContext (Context context){
-        this.context=context;
-    }
-
-
     public void setDeck(ArrayList<Card> arrayList, String deckName){
         //יוצר את החפיסה בדטהבייס בפעם הראשונה עבור כל חפיסה בנפרד
         DatabaseReference myRef = firebaseDatabase.getReference("decks/" + deckName +"/");
@@ -189,18 +184,19 @@ public class FbModule {
 
     //  שולח הודעת החלפה לפיירבייס כדי שהיריב יקבל Toast - יכנס לONDATA אחרי השינוי
     public void updateSwap(int myIndex, int opponentIndex, int swappingPlayer) {
-        swapInfo.setValue(new SwapInfo(myIndex, opponentIndex, swappingPlayer));
+        SwapInfo info = new SwapInfo(myIndex, opponentIndex, swappingPlayer);
+        swapInfo.setValue(info);
     }
 
     private void updateList(DataSnapshot snapshot, ArrayList<Card> list) {
-        ArrayList<Card> tempList = new ArrayList<>(); // רשימה זמנית
+        ArrayList<Card> tempList = new ArrayList<>();
         for (DataSnapshot child : snapshot.getChildren()) {
             Card card = child.getValue(Card.class);
             if (card != null) {
                 tempList.add(card);
             }
         }
-        // העדכון הממשי קורה בבת אחת - זה מונע מה-onDraw לתפוס רשימה ריקה
+        // העדכון רשימה קורה בבת אחת וזה למה זה מונע מה-onDraw לתפוס רשימה ריקה
         list.clear();
         list.addAll(tempList);
 

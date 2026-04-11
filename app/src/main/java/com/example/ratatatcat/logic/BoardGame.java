@@ -195,6 +195,18 @@ public class BoardGame extends View {
         buttonBitmap = Bitmap.createScaledBitmap(buttonBitmap, 400, 150, false);
         canvas.drawBitmap(buttonBitmap, canvasWidth -450, (canvasHeight/2) +520, null);
 
+        //צחור תור מי
+        if (GameModule.currentTurn == GameActivity.player){
+            Bitmap yourTurnBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.your_turn);
+            yourTurnBitmap = Bitmap.createScaledBitmap(yourTurnBitmap, 440, 120, false);
+            canvas.drawBitmap(yourTurnBitmap, 0, (canvasHeight/2) +370, null);
+        }
+        else {
+            Bitmap opponentTurnBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.opponent_turn);
+            opponentTurnBitmap = Bitmap.createScaledBitmap(opponentTurnBitmap, 440, 120, false);
+            canvas.drawBitmap(opponentTurnBitmap, 0, (canvasHeight/2) +370, null);
+        }
+
         // ציור הקלף שנמשך במרכז (אם קיים כזה)
         if (isCardDrawn && drawnCard != null) {
             Bitmap bitmap = BitmapFactory.decodeResource(getResources(), drawnCard.getIdShown());
