@@ -47,9 +47,6 @@ public class BoardGame extends View {
         gameModule = new GameModule(context);
         this.setBackgroundResource(R.drawable.gamebackground);
 
-        //revealedCards = new ArrayList<Card>();
-        //revealHandler = new Handler(Looper.getMainLooper());
-
         if (GameActivity.player == HOST) {
             gameModule.startGame();
         }
@@ -67,8 +64,7 @@ public class BoardGame extends View {
             return;
         }
         //אם עדיין לא התמלאו החבילות מFB מצייר מחדש כלומר חוזר לפעולה זו שוב
-        if (GameModule.deck == null || GameModule.deck.isEmpty() ||
-                GameModule.player1 == null || GameModule.player1.isEmpty() ||
+        if (GameModule.deck == null || GameModule.deck.isEmpty() || GameModule.player1 == null || GameModule.player1.isEmpty() ||
                 GameModule.player2 == null || GameModule.player2.isEmpty()) {
             invalidate(); // בקש ציור מחדש בעוד רגע
             return;
