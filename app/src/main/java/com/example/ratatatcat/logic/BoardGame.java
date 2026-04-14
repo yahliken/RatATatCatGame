@@ -215,7 +215,7 @@ public class BoardGame extends View {
     }
 
     // חושף את כל הקלפים ומחשב ניקוד וקורא לדיאלוג סיום משחק
-    public void triggerGameOver() {
+    public void GameOver() {
         gameModule.revealAllCards(this);
         //סכום הקלפים
         int hostSum = 0, joinSum = 0;
@@ -376,7 +376,6 @@ public class BoardGame extends View {
 
                 if(x >= btnEndX && x <= btnEndX + 400 && y >= btnEndY && y <= btnEndY + 150){
                     FbModule.getInstance(context).setGameOver();
-                    triggerGameOver();
                 }
 
                 break;

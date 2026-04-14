@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.ratatatcat.EndDialog;
 import com.example.ratatatcat.helpers.FbModule;
 import com.example.ratatatcat.logic.BoardGame;
 import android.content.Intent;
@@ -33,35 +34,14 @@ public class GameActivity extends AppCompatActivity {
         boardGame.setChanges();
     }
 
-    // נקרא מFbModule כשהיריב לחץ על rat-a-tat-cat
-    public void triggerGameOver() {
-        boardGame.triggerGameOver();
+    // הולך לפה כתוצאה משינוי בפיירבייס וכך גם לשחקן השני קופץ הדיאלוג
+    public void GameOver() {
+        boardGame.GameOver();
     }
 
     //  מקפיץ דיאלוג סיום משחק עם תוצאות וכפתור חזרה לMAIN
-    public void showGameOverDialog(int myScore, int opponentScore) {
-        String title, results;
-
-        if (myScore < opponentScore) {
-            title = "YOU WON";
-        }
-        else if (myScore > opponentScore) {
-            title = "YOU LOST";
-        }
-        else {
-            title = "It's a Tie!";
-        }
-
-        results = "Your score: " + myScore + "\nOpponent's score: " + opponentScore;
-
-        new AlertDialog.Builder(this)
-                .setTitle(title)
-                .setMessage(results)
-                .setCancelable(false)
-                .setPositiveButton("Home", (dialog, which) -> {
-                    startActivity(new Intent(this, MainActivity.class));
-                    finish();
-                })
-                .show();
+    public void showGameOverDialog(int mySum, int opponentSum) {
+        EndDialog dialog = new EndDialog(this, mySum, opponentSum);
+        dialog.show();
     }
 }

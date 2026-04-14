@@ -45,17 +45,17 @@ public class EndDialog extends Dialog implements View.OnClickListener {
         btnHome.setOnClickListener(this);
 
         //בדיקה מי ניצח לפי הנתונים בפעולה בונה שנקבל
-        if(mySum > opponentSum){
+        if(mySum < opponentSum){
             tvTitle.setText("YOU WON!");
         }
-        else if(mySum < opponentSum){
+        else if(mySum > opponentSum){
             tvTitle.setText("YOU LOST!");
         }
         else {
             tvTitle.setText("DRAW!");
         }
 
-        tvResults.setText(mySum +" VS "+ opponentSum);
+        tvResults.setText(mySum +"  vs  "+ opponentSum);
 
 
     }

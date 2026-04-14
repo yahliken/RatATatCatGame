@@ -126,12 +126,12 @@ public class FbModule {
                 if (snapshot.getValue() == null){
                     return;
                 }
-                Boolean isOver = (Boolean) snapshot.getValue();
+                Boolean isOver = (Boolean) snapshot.getValue(); // האם המשחק נגמר(הערך בצומת)
                 if (isOver != null && isOver && context instanceof GameActivity) {
                     ((GameActivity) context).runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            ((GameActivity) context).triggerGameOver();
+                            ((GameActivity) context).GameOver();
                         }
                     });
                 }
