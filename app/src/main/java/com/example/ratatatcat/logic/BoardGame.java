@@ -235,7 +235,7 @@ public class BoardGame extends View {
         }
 
         if (context instanceof GameActivity) {
-            ((GameActivity) context).showGameOverDialog(mySum, opponentSum);
+            ((GameActivity) context).showEndDialog(mySum, opponentSum);
         }
     }
 

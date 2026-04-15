@@ -88,6 +88,8 @@ public class GameModule {
         player1.clear();
         player2.clear();
         trash.clear();
+        currentTurn = 0; // המנהל תמיד מתחיל ב-0
+        BoardGame.FbExist = false; // נחכה שהנתונים יעלו לפיירבייס
         newDeck();
         shuffle();
         int count = 1;
