@@ -13,21 +13,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Instructions"
-        android:textSize="40dp"
-        android:textColor="#5D001E"
-        android:gravity="center"
-        android:layout_marginTop="40dp"
+        android:textSize="29dp"
+        android:textColor="#D6DC8096"
+        android:layout_marginLeft="195dp"
+        android:layout_marginTop="85dp"
         android:id="@+id/tvInstructionsTitle"
-        android:textStyle="bold"></TextView>
+        android:textStyle="italic"></TextView>
 
     <TextView
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:text="The goal of the game is to have the smallest sum of your four cards.\nOn your turn, you will receive a card from the deck.\nIf you receive a number, you can exchange your card for the card you received or discard the card.\nIf you receive a swap card, you can exchange your card for your opponent's card or discard the card.\nIf you receive a peek card, you can peek at your own card or your opponent's card or discard the card.\nIf you receive a draw two card, you will receive two more cards from the deck for the same use.\nIf you think you have the lower sum of numbers - press the rat-a-tat-cat button and end the game."
         android:textSize="20dp"
-        android:textColor="#5D001E"
+        android:textColor="#5D0033"
         android:layout_marginLeft="60dp"
-        android:layout_marginTop="0dp"
+        android:layout_marginTop="20dp"
         android:id="@+id/tvInstructions"
         android:textStyle="italic"></TextView>
 
@@ -37,16 +37,16 @@
         android:orientation="horizontal">
 
         <Button
-            android:layout_width="60dp"
-            android:layout_height="50dp"
+            android:layout_width="55dp"
+            android:layout_height="40dp"
             android:text="X"
             android:textStyle="bold"
-            android:textSize="20dp"
-            android:backgroundTint="#D6E9869E"
-            android:textColor="#5D001E"
+            android:textSize="15dp"
+            android:backgroundTint="#FFB1F7"
+            android:textColor="#5D0033"
             android:id="@+id/btnX"
             android:layout_marginLeft="60dp"
-            android:layout_marginTop="1dp"></Button>
+            android:layout_marginTop="0dp"></Button>
 
         <Button
             android:layout_width="200dp"
@@ -54,11 +54,11 @@
             android:text="✨ Ask cat chat"
             android:textStyle="bold"
             android:textSize="20dp"
-            android:backgroundTint="#D6FFD9D9"
-            android:textColor="#5D001E"
+            android:backgroundTint="#D6FFE1E1"
+            android:textColor="#5D0033"
             android:id="@+id/btnAI"
             android:layout_marginLeft="20dp"
-            android:layout_marginTop="1dp"></Button>
+            android:layout_marginTop="0dp"></Button>
     </LinearLayout>
 
 </LinearLayout>

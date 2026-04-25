@@ -13,12 +13,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Ask cat chat"
-        android:textSize="40dp"
-        android:textColor="#5D001E"
-        android:gravity="center"
-        android:layout_marginTop="50dp"
+        android:textSize="29dp"
+        android:textColor="#D6DC8096"
+        android:layout_marginLeft="195dp"
+        android:layout_marginTop="85dp"
         android:id="@+id/tvInstructionsAITitle"
-        android:textStyle="bold"></TextView>
+        android:textStyle="italic"></TextView>
 
     <EditText
         android:layout_width="280dp"
@@ -27,6 +27,7 @@
         android:textSize="20dp"
         android:gravity="top"
         android:background="#FFEEEE"
+        android:layout_marginTop="30dp"
         android:hint="Enter your question here_"
         android:id="@+id/etQuestion"></EditText>
 
@@ -36,8 +37,8 @@
         android:text="Send🔎"
         android:textStyle="bold"
         android:textSize="20dp"
-        android:backgroundTint="#D6FFD9D9"
-        android:textColor="#5D001E"
+        android:backgroundTint="#FFB1F7"
+        android:textColor="#5D0033"
         android:id="@+id/btnSend"
         android:layout_marginLeft="65dp"
         android:layout_marginTop="15dp"></Button>
@@ -57,8 +58,8 @@
         android:text="X"
         android:textStyle="bold"
         android:textSize="20dp"
-        android:backgroundTint="#D6E9869E"
-        android:textColor="#5D001E"
+        android:backgroundTint="#FFB1F7"
+        android:textColor="#5D0033"
         android:id="@+id/btnX"
         android:layout_marginLeft="60dp"
         android:layout_marginTop="15dp"></Button>

@@ -24,12 +24,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Sign up"
-                android:textSize="40dp"
-                android:textColor="#5D001E"
-                android:gravity="center"
-                android:layout_marginTop="50dp"
+                android:textSize="29dp"
+                android:textColor="#D6DC8096"
+                android:layout_marginLeft="210dp"
+                android:layout_marginTop="85dp"
                 android:id="@+id/tvSignUp"
-                android:textStyle="bold"></TextView>
+                android:textStyle="italic"></TextView>
 
             <EditText
                 android:layout_width="170dp"
@@ -65,8 +65,8 @@
                 android:layout_height="wrap_content"
                 android:text="Sign up"
                 android:textSize="20dp"
-                android:backgroundTint="#D6EF90A8"
-                android:textColor="#5D001E"
+                android:backgroundTint="#FFB1F7"
+                android:textColor="#5D0033"
                 android:id="@+id/btnSignUp"
                 android:layout_gravity="center"
                 android:layout_marginTop="40dp"></Button>
@@ -76,7 +76,7 @@
                 android:layout_height="wrap_content"
                 android:text="Already have an account? Log in"
                 android:textSize="20dp"
-                android:textColor="#1C40FF"
+                android:textColor="#C285D1"
                 android:gravity="center"
                 android:layout_marginTop="20dp"
                 android:textStyle="italic"
@@ -94,12 +94,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Log in"
-                android:textSize="40dp"
-                android:textColor="#5D001E"
-                android:gravity="center"
-                android:layout_marginTop="50dp"
+                android:textSize="29dp"
+                android:textColor="#D6DC8096"
+                android:layout_marginLeft="210dp"
+                android:layout_marginTop="85dp"
                 android:id="@+id/tvLogIn"
-                android:textStyle="bold"></TextView>
+                android:textStyle="italic"></TextView>
 
             <EditText
                 android:layout_width="170dp"
@@ -125,8 +125,8 @@
                 android:layout_height="wrap_content"
                 android:text="Log in"
                 android:textSize="20dp"
-                android:backgroundTint="#D6EF90A8"
-                android:textColor="#5D001E"
+                android:backgroundTint="#FFB1F7"
+                android:textColor="#5D0033"
                 android:id="@+id/btnLogIn"
                 android:layout_gravity="center"
                 android:layout_marginTop="40dp"></Button>
@@ -136,7 +136,7 @@
                 android:layout_height="wrap_content"
                 android:text="Don't have an account? Sign up"
                 android:textSize="20dp"
-                android:textColor="#1C40FF"
+                android:textColor="#C285D1"
                 android:gravity="center"
                 android:layout_marginTop="20dp"
                 android:textStyle="italic"

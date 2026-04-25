@@ -11,11 +11,11 @@
 
     <TextView
         android:layout_width="match_parent"
-        android:background="#FFB1B1"
+        android:background="#B6FFB1F7"
         android:layout_height="wrap_content"
         android:text="Hello"
         android:textSize="20dp"
-        android:textColor="#5D001E"
+        android:textColor="#5D0033"
         android:gravity="center"
         android:layout_marginTop="20dp"
         android:textStyle="bold"
@@ -23,48 +23,48 @@
 
     <Space
         android:layout_width="match_parent"
-        android:layout_height="340dp"></Space>
+        android:layout_height="360dp"></Space>
 
     <Button
-        android:layout_width="130dp"
-        android:layout_height="60dp"
+        android:layout_width="110dp"
+        android:layout_height="50dp"
         android:text="Play"
-        android:textSize="30dp"
-        android:textColor="#5D001E"
-        android:backgroundTint="#D6EF90A8"
+        android:textSize="24dp"
+        android:textColor="#5D0033"
+        android:backgroundTint="#EA9AFF"
         android:layout_gravity="center"
         android:layout_marginTop="0dp"
         android:id="@+id/btnPlay"></Button>
 
     <Button
-        android:layout_width="215dp"
-        android:layout_height="60dp"
+        android:layout_width="180dp"
+        android:layout_height="50dp"
         android:text="Join game"
-        android:textSize="30dp"
-        android:textColor="#5D001E"
-        android:backgroundTint="#D6EF90A8"
+        android:textSize="24dp"
+        android:textColor="#5D0033"
+        android:backgroundTint="#EA9AFF"
         android:layout_gravity="center"
         android:layout_marginTop="5dp"
         android:id="@+id/btnJoin"></Button>
 
     <Button
-        android:layout_width="215dp"
-        android:layout_height="60dp"
+        android:layout_width="180dp"
+        android:layout_height="50dp"
         android:text="Instructions"
-        android:textSize="30dp"
-        android:textColor="#5D001E"
-        android:backgroundTint="#D6EF90A8"
+        android:textSize="24dp"
+        android:textColor="#5D0033"
+        android:backgroundTint="#EA9AFF"
         android:layout_gravity="center"
         android:layout_marginTop="5dp"
         android:id="@+id/btnInstructions"></Button>
 
     <Button
-        android:layout_width="215dp"
-        android:layout_height="60dp"
+        android:layout_width="180dp"
+        android:layout_height="50dp"
         android:text="Sign up"
-        android:textSize="30dp"
-        android:textColor="#5D001E"
-        android:backgroundTint="#D6EF90A8"
+        android:textSize="24dp"
+        android:textColor="#5D0033"
+        android:backgroundTint="#EA9AFF"
         android:layout_gravity="center"
         android:layout_marginTop="5dp"
         android:id="@+id/btnSignUp"></Button>

@@ -212,18 +212,4 @@ public class GameModule {
         return null;
     }
 
-   /* public int playerSum (int playerNum){
-        int player1Sum=0, player2Sum =0;
-        for (int i = 0; i < 4; i++) {
-            player1Sum += player1.get(i).getValue();
-            player2Sum += player2.get(i).getValue();
-        }
-        if(playerNum == 0){
-            return player1Sum;
-        }
-        else {
-            return player2Sum;
-        }
-    }*/
-
 }
