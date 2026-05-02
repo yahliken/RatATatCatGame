@@ -1,4 +1,4 @@
-package com.example.ratatatcat.activities;
+package com.example.ratatatcat;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -9,9 +9,6 @@ import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.example.ratatatcat.R;
-import com.example.ratatatcat.helpers.UserDetails;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 

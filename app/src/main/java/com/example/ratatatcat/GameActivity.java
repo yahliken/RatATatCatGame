@@ -1,16 +1,9 @@
-package com.example.ratatatcat.activities;
+package com.example.ratatatcat;
 
-import android.app.Dialog;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.example.ratatatcat.EndDialog;
-import com.example.ratatatcat.helpers.FbModule;
-import com.example.ratatatcat.logic.BoardGame;
-import android.content.Intent;
-import androidx.appcompat.app.AlertDialog;
 
 public class GameActivity extends AppCompatActivity {
 

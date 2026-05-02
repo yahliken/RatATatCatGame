@@ -1,10 +1,8 @@
-package com.example.ratatatcat.model;
+package com.example.ratatatcat;
 
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-
-import com.example.ratatatcat.R;
 
 public class Card {
     private int value;

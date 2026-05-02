@@ -1,4 +1,4 @@
-package com.example.ratatatcat.activities;
+package com.example.ratatatcat;
 
 import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
@@ -12,11 +12,6 @@ import android.widget.ViewFlipper;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.example.ratatatcat.R;
-import com.example.ratatatcat.helpers.FbModule;
-import com.example.ratatatcat.helpers.UserDetails;
-import com.example.ratatatcat.model.User;
 
 public class SignUpActivity extends AppCompatActivity implements View.OnClickListener {
 

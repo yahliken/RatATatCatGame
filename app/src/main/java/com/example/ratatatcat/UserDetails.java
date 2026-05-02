@@ -1,4 +1,4 @@
-package com.example.ratatatcat.helpers;
+package com.example.ratatatcat;
 
 import android.content.Context;
 

@@ -1,12 +1,6 @@
-package com.example.ratatatcat.logic;
+package com.example.ratatatcat;
 
 import android.content.Context;
-
-import com.example.ratatatcat.R;
-import com.example.ratatatcat.activities.GameActivity;
-import com.example.ratatatcat.helpers.FbModule;
-import com.example.ratatatcat.model.Card;
-import com.google.firebase.database.DataSnapshot;
 
 import java.util.ArrayList;
 import android.os.Handler;

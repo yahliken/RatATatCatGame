@@ -18,19 +18,19 @@
             android:name=".GameOverDialog"
             android:exported="false" />
         <activity
-            android:name=".activities.GameActivity"
+            android:name=".GameActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.InstructionsAIActivity"
+            android:name=".InstructionsAIActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.InstructionsActivity"
+            android:name=".InstructionsActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.SignUpActivity"
+            android:name=".SignUpActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.MainActivity"
+            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

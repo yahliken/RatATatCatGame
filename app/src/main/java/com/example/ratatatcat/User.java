@@ -1,4 +1,4 @@
-package com.example.ratatatcat.model;
+package com.example.ratatatcat;
 
 public class User {
     private String userName;

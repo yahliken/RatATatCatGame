@@ -1,14 +1,9 @@
-package com.example.ratatatcat.helpers;
+package com.example.ratatatcat;
 
 import android.content.Context;
 
 import androidx.annotation.NonNull;
 
-import com.example.ratatatcat.activities.GameActivity;
-import com.example.ratatatcat.logic.BoardGame;
-import com.example.ratatatcat.logic.GameModule;
-import com.example.ratatatcat.model.Card;
-import com.example.ratatatcat.model.SwapInfo;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;

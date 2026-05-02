@@ -1,24 +1,17 @@
-package com.example.ratatatcat.logic;
+package com.example.ratatatcat;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.os.Handler;
-import android.os.Looper;
 import android.view.MotionEvent;
 import android.view.View;
 
 import androidx.annotation.NonNull;
 
-import com.example.ratatatcat.R;
-import com.example.ratatatcat.activities.GameActivity;
-import com.example.ratatatcat.model.Card;
-
 import java.util.ArrayList;
 
 import android.widget.Toast;
-import com.example.ratatatcat.helpers.FbModule;
 
 public class BoardGame extends View {
 

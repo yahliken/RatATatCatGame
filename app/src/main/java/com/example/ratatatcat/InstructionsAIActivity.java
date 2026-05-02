@@ -1,4 +1,4 @@
-package com.example.ratatatcat.activities;
+package com.example.ratatatcat;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,7 +10,6 @@ import android.widget.TextView;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.ratatatcat.R;
 import com.example.ratatatcat.gemini.GeminiCallback;
 import com.example.ratatatcat.gemini.GeminiManager;
 
