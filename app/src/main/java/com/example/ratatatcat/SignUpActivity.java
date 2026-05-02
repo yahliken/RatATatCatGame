@@ -92,7 +92,6 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         }
         else {
             sp.edit().putString(userName, password).apply(); // שמירת שם וסיסמה
-            sp.edit().putString("currentLoggedUser", userName).apply(); // שמירת המשתמש המחובר כרגע
             Toast.makeText(this, "User added", Toast.LENGTH_SHORT).show();
             UserDetails.getInstance(this).setUserName(userName);
             finish();
@@ -113,7 +112,6 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         String savedPassword = sp.getString(userName, null);
 
         if (sp.contains(userName) && savedPassword != null && savedPassword.equals(password)) {
-            sp.edit().putString("currentLoggedUser", userName).apply();
             Toast.makeText(this, "Logged in", Toast.LENGTH_SHORT).show();
             UserDetails.getInstance(this).setUserName(userName);
             finish();
